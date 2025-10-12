@@ -1,16 +1,20 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from .config import get_settings
+from .database import remove_session
+
 app = FastAPI(
-    title="Community App API",
-    description="API for the Community App",
-    version="0.1.0"
+    title=settings.app_name,
+    description=settings.description,
+    version=settings.version,
+    debug=settings.debug,
 )
 
 # Add CORS middleware to allow requests from frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify exact origins
+    allow_origins=settings.cors_origins or ["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -23,6 +27,12 @@ def read_root():
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+
+@app.on_event("shutdown")
+def shutdown_event() -> None:
+    """Ensure scoped sessions are cleaned up when application stops."""
+    remove_session()
 
 if __name__ == "__main__":
     import uvicorn
