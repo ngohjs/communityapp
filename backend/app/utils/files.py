@@ -28,7 +28,9 @@ def save_avatar(image_data: bytes, filename_suffix: str | None = None) -> Tuple[
         img = img.convert("RGBA") if img.mode in ("P", "RGBA") else img.convert("RGB")
         img.thumbnail((512, 512))
         format_hint = suffix.upper() if suffix else "PNG"
-        if format_hint not in {"PNG", "JPG", "JPEG"}:
+        if format_hint == "JPG":
+            format_hint = "JPEG"
+        if format_hint not in {"PNG", "JPEG"}:
             format_hint = "PNG"
         img.save(output_path, format=format_hint, optimize=True)
 
