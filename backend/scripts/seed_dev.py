@@ -47,6 +47,7 @@ def seed_super_admin(session) -> None:
         last_name=settings.seed_admin_last_name,
         password_hash=password_hash,
         status=UserStatus.active.value,
+        is_admin=True,
     )
     session.add(user)
     session.flush()

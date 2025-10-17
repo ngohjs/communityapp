@@ -16,10 +16,16 @@
 - `backend/app/services/auth_service.py` - Business logic for auth flows, token management.
 - `backend/app/services/notification_service.py` - Notification provider abstraction + stub implementation.
 - `backend/app/services/audit_service.py` - Helper for persisting audit log entries across modules.
+- `backend/app/services/profile_service.py` - Profile retrieval and update business logic.
 - `backend/app/security.py` - Password hashing and token helpers for auth flows.
 - `backend/app/utils/rate_limiter.py` - In-process rate limiter state for auth endpoints.
 - `backend/app/middleware/rate_limit.py` - Middleware enforcing auth endpoint rate limits.
+- `backend/app/dependencies.py` - Shared FastAPI dependencies (auth, DB helpers).
+- `backend/app/utils/files.py` - Helpers for avatar storage and image resizing.
 - `backend/tests/test_auth.py` - Backend tests covering auth/session flows.
+- `backend/tests/test_profile.py` - Backend tests validating profile endpoints.
+- `backend/alembic/versions/0003_add_user_admin_and_privacy_defaults.py` - Migration adding admin flag and privacy defaults.
+- `backend/scripts/seed_dev.py` - Seeds admin user and categories for development environments.
 - `backend/tests/test_profiles.py` - Tests for profile privacy and update flows.
 - `backend/tests/test_content.py` - Tests for content listing, engagement, and admin operations.
 - `frontend/package.json` - Update scripts/dependencies for Vite, Tailwind, shadcn/ui.
@@ -90,11 +96,11 @@
   - [x] 2.4 Implement forgot/reset password flow with time-bound tokens, stub email dispatch, and logging.
   - [x] 2.5 Add in-process rate limiting middleware for auth endpoints (5 attempts per 15 minutes) and tests.
 
-- [ ] 3.0 Backend Profiles, Privacy & Preferences
-  - [ ] 3.1 Implement profile retrieval/update endpoints with validation and audit logging.
-  - [ ] 3.2 Add avatar upload handling (file validation, resize to 512x512, local storage path management).
-  - [ ] 3.3 Implement privacy preference persistence (Private/Community/Admin) and enforce visibility rules on profile fetch.
-  - [ ] 3.4 Implement notification preference toggles (content/community/account) and expose settings endpoint.
+- [x] 3.0 Backend Profiles, Privacy & Preferences
+  - [x] 3.1 Implement profile retrieval/update endpoints with validation and audit logging.
+  - [x] 3.2 Add avatar upload handling (file validation, resize to 512x512, local storage path management).
+  - [x] 3.3 Implement privacy preference persistence (Private/Community/Admin) and enforce visibility rules on profile fetch.
+  - [x] 3.4 Implement notification preference toggles (content/community/account) and expose settings endpoint.
 
 - [ ] 4.0 Backend Content Library, Engagement & Admin Tools
   - [ ] 4.1 Build admin content CRUD endpoints (create, update, archive) with metadata validation and file storage.

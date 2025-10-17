@@ -41,6 +41,9 @@ class Settings(BaseSettings):
     auth_rate_limit_attempts: int = Field(default=5, ge=1)
     auth_rate_limit_window_minutes: int = Field(default=15, ge=1)
 
+    media_root: str = Field(default="storage", description="Root directory for uploaded media")
+    avatar_subdir: str = Field(default="avatars", description="Subdirectory for avatar uploads")
+
     cors_origins: List[str] = Field(
         default_factory=lambda: ["http://localhost:5173"],
         description="Allowed CORS origins for the frontend application",

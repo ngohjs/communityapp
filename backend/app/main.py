@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .config import get_settings
 from .api.routes import auth as auth_routes
+from .api.routes import profile as profile_routes
 from .middleware.rate_limit import AuthRateLimitMiddleware
 from .database import remove_session
 
@@ -27,6 +28,7 @@ app.add_middleware(
 app.add_middleware(AuthRateLimitMiddleware)
 
 app.include_router(auth_routes.router)
+app.include_router(profile_routes.router)
 
 @app.get("/")
 def read_root():
