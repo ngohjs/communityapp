@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import List
+from typing import List, Literal, Optional
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -31,6 +31,15 @@ class Settings(BaseSettings):
     secret_key: str = Field(default="change-me", description="Secret key for signing tokens")
     access_token_expiry_minutes: int = Field(default=15, ge=5)
     refresh_token_expiry_days: int = Field(default=7, ge=1)
+    verification_token_expiry_hours: int = Field(default=24, ge=1)
+    password_reset_token_expiry_minutes: int = Field(default=30, ge=5)
+    refresh_token_cookie_name: str = Field(default="community_refresh_token")
+    refresh_token_cookie_path: str = Field(default="/auth")
+    refresh_cookie_secure: bool = Field(default=False)
+    refresh_cookie_samesite: Literal["lax", "strict", "none"] = Field(default="lax")
+    refresh_cookie_domain: Optional[str] = Field(default=None)
+    auth_rate_limit_attempts: int = Field(default=5, ge=1)
+    auth_rate_limit_window_minutes: int = Field(default=15, ge=1)
 
     cors_origins: List[str] = Field(
         default_factory=lambda: ["http://localhost:5173"],
