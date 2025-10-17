@@ -45,6 +45,24 @@
 - `frontend/src/__tests__/content.test.tsx` - Tests for content list/detail interactions.
 - `docker-compose.yml` - Update services and volumes to support new backend/frontend flow.
 - `README.md` - Document setup, env vars, seed instructions, rollout notes.
+- `backend/requirements.txt` - Python dependencies for the backend services.
+- `backend/alembic.ini` - Alembic configuration for database migrations.
+- `backend/alembic/env.py` - Alembic environment script tying into application metadata.
+- `backend/alembic/versions/0001_initial_schema.py` - Initial migration creating core database tables.
+- `backend/app/database.py` - SQLAlchemy engine and session helpers.
+- `backend/app/models/user.py` - SQLAlchemy model for core user entity.
+- `backend/app/models/profile.py` - Profile metadata linked to users.
+- `backend/app/models/preference.py` - User notification/privacy preferences model.
+- `backend/app/models/category.py` - Content category model for taxonomy.
+- `backend/app/models/content.py` - Content items with metadata and relations.
+- `backend/app/models/comment.py` - Member comments on content.
+- `backend/app/models/like.py` - Like records with uniqueness constraint.
+- `backend/app/models/session.py` - Persistent user session records.
+- `backend/app/models/audit.py` - Audit log entries for system actions.
+- `backend/app/models/__init__.py` - Aggregate exports for SQLAlchemy models.
+- `backend/scripts/seed_dev.py` - Development seed script for categories and super-admin.
+- `backend/scripts/__init__.py` - Package marker for backend scripts.
+- `backend/tests/test_placeholder.py` - Temporary pytest placeholder ensuring suite passes.
 
 ### Notes
 
@@ -54,12 +72,12 @@
 
 ## Tasks
 
-- [ ] 1.0 Backend Platform & Database Foundations
-  - [ ] 1.1 Review existing FastAPI scaffold, define application settings module, and wire environment-based configuration.
-  - [ ] 1.2 Introduce SQLAlchemy engine/session helpers and register them as FastAPI dependencies.
-  - [ ] 1.3 Configure Alembic with base migration scripts and generate the initial schema migration for core tables.
-  - [ ] 1.4 Implement SQLAlchemy models (Users, Profiles, Preferences, Sessions, Categories, Content, Comments, Likes, AuditLogs) with indices and relationships.
-  - [ ] 1.5 Seed development data script for baseline categories and bootstrap super-admin account.
+- [x] 1.0 Backend Platform & Database Foundations
+  - [x] 1.1 Review existing FastAPI scaffold, define application settings module, and wire environment-based configuration.
+  - [x] 1.2 Introduce SQLAlchemy engine/session helpers and register them as FastAPI dependencies.
+  - [x] 1.3 Configure Alembic with base migration scripts and generate the initial schema migration for core tables.
+  - [x] 1.4 Implement SQLAlchemy models (Users, Profiles, Preferences, Sessions, Categories, Content, Comments, Likes, AuditLogs) with indices and relationships.
+  - [x] 1.5 Seed development data script for baseline categories and bootstrap super-admin account.
 
 - [ ] 2.0 Backend Authentication & Session Management
   - [ ] 2.1 Build registration endpoint with validation, password hashing, pending status, and audit entry.
@@ -108,4 +126,3 @@
   - [ ] 9.2 Configure linting/formatting (Ruff, Black, ESLint, Prettier) and add CI scripts or instructions.
   - [ ] 9.3 Document environment setup, `.env` variables, seed scripts, and deployment steps in README/docs.
   - [ ] 9.4 Add health check endpoint/tests, structured logging config, and placeholders for monitoring/metrics.
-
