@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import get_settings
 from .database import remove_session
 
+settings = get_settings()
+
 app = FastAPI(
     title=settings.app_name,
     description=settings.description,
