@@ -11,24 +11,22 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from ..database import Base
 
 
-class UserSession(Base):
-    __tablename__ = "user_sessions"
-    __table_args__ = (Index("ix_user_sessions_expires_at", "expires_at"),)
+class PasswordResetToken(Base):
+    __tablename__ = "password_reset_tokens"
+    __table_args__ = (Index("ix_password_reset_tokens_expires_at", "expires_at"),)
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        ForeignKey("users.id", ondelete="CASCADE"),
-        nullable=False,
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
-    refresh_token_hash: Mapped[str] = mapped_column(String(512), nullable=False)
+    token_id: Mapped[str] = mapped_column(String(64), unique=True, nullable=False, index=True)
+    token_hash: Mapped[str] = mapped_column(String(512), nullable=False)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    device_info: Mapped[Optional[str]] = mapped_column(String(255))
-    ip_address: Mapped[Optional[str]] = mapped_column(String(64))
+    used_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
 
-    user = relationship("User", back_populates="sessions")
+    user = relationship("User", back_populates="password_reset_tokens")

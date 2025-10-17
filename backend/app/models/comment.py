@@ -3,6 +3,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 from enum import Enum
+from typing import Optional
 
 from sqlalchemy import DateTime, ForeignKey, String, Text, func
 from sqlalchemy.dialects.postgresql import UUID
@@ -27,7 +28,7 @@ class Comment(Base):
         ForeignKey("content_items.id", ondelete="CASCADE"),
         nullable=False,
     )
-    author_id: Mapped[uuid.UUID | None] = mapped_column(
+    author_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,

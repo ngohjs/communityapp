@@ -8,6 +8,7 @@ from sqlalchemy import engine_from_config, pool
 
 from backend.app.config import get_settings
 from backend.app.database import Base
+import backend.app.models  # noqa: F401 - ensure models are imported for metadata
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

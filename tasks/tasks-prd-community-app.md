@@ -16,6 +16,9 @@
 - `backend/app/services/auth_service.py` - Business logic for auth flows, token management.
 - `backend/app/services/notification_service.py` - Notification provider abstraction + stub implementation.
 - `backend/app/services/audit_service.py` - Helper for persisting audit log entries across modules.
+- `backend/app/security.py` - Password hashing and token helpers for auth flows.
+- `backend/app/utils/rate_limiter.py` - In-process rate limiter state for auth endpoints.
+- `backend/app/middleware/rate_limit.py` - Middleware enforcing auth endpoint rate limits.
 - `backend/tests/test_auth.py` - Backend tests covering auth/session flows.
 - `backend/tests/test_profiles.py` - Tests for profile privacy and update flows.
 - `backend/tests/test_content.py` - Tests for content listing, engagement, and admin operations.
@@ -59,6 +62,7 @@
 - `backend/app/models/like.py` - Like records with uniqueness constraint.
 - `backend/app/models/session.py` - Persistent user session records.
 - `backend/app/models/audit.py` - Audit log entries for system actions.
+- `backend/app/models/password_reset.py` - Password reset token records and expiry tracking.
 - `backend/app/models/__init__.py` - Aggregate exports for SQLAlchemy models.
 - `backend/scripts/seed_dev.py` - Development seed script for categories and super-admin.
 - `backend/scripts/__init__.py` - Package marker for backend scripts.
@@ -79,12 +83,12 @@
   - [x] 1.4 Implement SQLAlchemy models (Users, Profiles, Preferences, Sessions, Categories, Content, Comments, Likes, AuditLogs) with indices and relationships.
   - [x] 1.5 Seed development data script for baseline categories and bootstrap super-admin account.
 
-- [ ] 2.0 Backend Authentication & Session Management
-  - [ ] 2.1 Build registration endpoint with validation, password hashing, pending status, and audit entry.
-  - [ ] 2.2 Implement email verification tokens, verification endpoint, and pending→active transition.
-  - [ ] 2.3 Implement login, refresh, logout endpoints issuing/rotating JWT access + HttpOnly refresh cookies, persisting tokens in `User_Sessions`.
-  - [ ] 2.4 Implement forgot/reset password flow with time-bound tokens, stub email dispatch, and logging.
-  - [ ] 2.5 Add in-process rate limiting middleware for auth endpoints (5 attempts per 15 minutes) and tests.
+- [x] 2.0 Backend Authentication & Session Management
+  - [x] 2.1 Build registration endpoint with validation, password hashing, pending status, and audit entry.
+  - [x] 2.2 Implement email verification tokens, verification endpoint, and pending→active transition.
+  - [x] 2.3 Implement login, refresh, logout endpoints issuing/rotating JWT access + HttpOnly refresh cookies, persisting tokens in `User_Sessions`.
+  - [x] 2.4 Implement forgot/reset password flow with time-bound tokens, stub email dispatch, and logging.
+  - [x] 2.5 Add in-process rate limiting middleware for auth endpoints (5 attempts per 15 minutes) and tests.
 
 - [ ] 3.0 Backend Profiles, Privacy & Preferences
   - [ ] 3.1 Implement profile retrieval/update endpoints with validation and audit logging.

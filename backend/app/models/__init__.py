@@ -7,6 +7,7 @@ from .preference import UserPreference
 from .profile import UserProfile
 from .session import UserSession
 from .user import User
+from .password_reset import PasswordResetToken
 
 __all__ = [
     "AuditLog",
@@ -18,4 +19,5 @@ __all__ = [
     "UserProfile",
     "UserSession",
     "User",
+    "PasswordResetToken",
 ]
