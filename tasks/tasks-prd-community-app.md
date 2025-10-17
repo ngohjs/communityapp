@@ -39,17 +39,30 @@
 - `backend/tests/test_profiles.py` - Tests for profile privacy and update flows.
 - `backend/tests/test_content.py` - Tests for content listing, engagement, and admin operations.
 - `frontend/package.json` - Update scripts/dependencies for Vite, Tailwind, shadcn/ui.
+- `frontend/package-lock.json` - Locked dependency graph for frontend tooling.
+- `frontend/index.html` - Vite HTML entry point mounting the React app.
 - `frontend/vite.config.ts` - Vite configuration (new) replacing CRA tooling.
 - `frontend/tailwind.config.ts` - Tailwind configuration (new) for styling system.
 - `frontend/postcss.config.js` - Tailwind/PostCSS pipeline configuration.
+- `frontend/tsconfig.json` - TypeScript project references for shared compiler options.
+- `frontend/tsconfig.app.json` - TypeScript compiler options for the application bundle.
+- `frontend/tsconfig.node.json` - TypeScript compiler options for Vite tooling context.
 - `frontend/src/main.tsx` - React entry; set up Router, QueryClient, providers.
 - `frontend/src/App.tsx` - Application shell/layout, route composition.
+- `frontend/src/index.css` - Global styles loaded by Vite with Tailwind layers.
+- `frontend/src/lib/react-query.ts` - Shared TanStack Query client and defaults.
 - `frontend/src/lib/api/client.ts` - Axios/TanStack Query client with auth interceptors.
-- `frontend/src/routes/auth/LoginPage.tsx` - Login form and validation.
+- `frontend/src/router.tsx` - Route configuration for application shell and feature modules.
+- `frontend/src/layouts/AppLayout.tsx` - Top-level layout with header/footer shell.
+- `frontend/src/routes/HomePage.tsx` - Placeholder landing page linking to auth flows.
+- `frontend/src/providers/AuthProvider.tsx` - Auth context managing tokens and session refresh.
+- `frontend/src/routes/NotFoundPage.tsx` - 404 experience with navigation recovery.
+- `frontend/src/routes/auth/LoginPage.tsx` - Login form integrating with auth context.
 - `frontend/src/routes/auth/RegisterPage.tsx` - Registration flow UI.
 - `frontend/src/routes/auth/VerifyEmailPage.tsx` - Verification confirmation.
 - `frontend/src/routes/auth/ForgotPasswordPage.tsx` - Reset request UI.
 - `frontend/src/routes/auth/ResetPasswordPage.tsx` - Password reset form.
+- `frontend/src/routes/auth/LogoutPage.tsx` - Logout confirmation view clearing session cookie.
 - `frontend/src/routes/profile/ProfilePage.tsx` - Profile view with privacy-aware rendering.
 - `frontend/src/routes/profile/EditProfilePage.tsx` - Profile edit form, avatar upload.
 - `frontend/src/routes/profile/SettingsPage.tsx` - Notification and privacy settings UI.
@@ -112,7 +125,7 @@
   - [x] 3.3 Implement privacy preference persistence (Private/Community/Admin) and enforce visibility rules on profile fetch.
   - [x] 3.4 Implement notification preference toggles (content/community/account) and expose settings endpoint.
 
-- [ ] 4.0 Backend Content Library, Engagement & Admin Tools
+- [x] 4.0 Backend Content Library, Engagement & Admin Tools
   - [x] 4.1 Build admin content CRUD endpoints (create, update, archive) with metadata validation and file storage.
   - [x] 4.2 Implement member-facing content listing with filters, search, pagination, and response DTOs.
   - [x] 4.3 Implement content detail endpoint with signed download token generation and download logging.
@@ -124,11 +137,11 @@
   - [ ] 5.2 Integrate notification triggers for key events (registration, verified account, new admin content) respecting user opt-in flags.
   - [ ] 5.3 Build audit log service/API endpoint for admins with pagination and filters.
 
-- [ ] 6.0 Frontend Application Shell & Core Auth Flows
-  - [ ] 6.1 Replace CRA scaffold with Vite + React 19 + TypeScript + Tailwind configuration.
-  - [ ] 6.2 Configure routing, TanStack Query client, global styles, and basic layout/shell.
-  - [ ] 6.3 Implement registration, email verification, login, logout, forgot/reset password pages wired to backend.
-  - [ ] 6.4 Implement auth context/token refresh handling with Axios interceptors for HttpOnly cookie refresh process.
+- [x] 6.0 Frontend Application Shell & Core Auth Flows
+  - [x] 6.1 Replace CRA scaffold with Vite + React 19 + TypeScript + Tailwind configuration.
+  - [x] 6.2 Configure routing, TanStack Query client, global styles, and basic layout/shell.
+  - [x] 6.3 Implement registration, email verification, login, logout, forgot/reset password pages wired to backend.
+  - [x] 6.4 Implement auth context/token refresh handling with Axios interceptors for HttpOnly cookie refresh process.
 
 - [ ] 7.0 Frontend Profile Management & Settings
   - [ ] 7.1 Build profile view/edit forms with validation, avatar uploader, and API integration.
