@@ -43,6 +43,8 @@ class Settings(BaseSettings):
 
     media_root: str = Field(default="storage", description="Root directory for uploaded media")
     avatar_subdir: str = Field(default="avatars", description="Subdirectory for avatar uploads")
+    content_subdir: str = Field(default="content", description="Subdirectory for content files")
+    content_max_file_size_mb: int = Field(default=200, ge=1)
 
     cors_origins: List[str] = Field(
         default_factory=lambda: ["http://localhost:5173"],
