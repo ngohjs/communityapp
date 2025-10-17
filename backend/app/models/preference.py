@@ -26,7 +26,7 @@ class UserPreference(Base):
         primary_key=True,
     )
     privacy_level: Mapped[str] = mapped_column(
-        String(32), nullable=False, default=PrivacyLevel.community.value
+        String(32), nullable=False, default=PrivacyLevel.private.value
     )
     notify_content: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     notify_community: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
