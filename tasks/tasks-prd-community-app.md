@@ -8,12 +8,20 @@
 - `backend/app/models/content.py` - Models for categories, content items, comments, likes, audit logs.
 - `backend/app/schemas/auth.py` - Pydantic schemas for auth requests/responses.
 - `backend/app/schemas/profile.py` - Schemas for profile data and privacy preferences.
-- `backend/app/schemas/content.py` - Schemas for content CRUD, comments, likes.
+- `backend/app/schemas/content.py` - Schemas for content management (admin + member views).
+- `backend/app/schemas/comment.py` - Schemas for comment payloads and responses.
+- `backend/app/schemas/like.py` - Schemas for like responses.
+- `backend/app/api/routes/content.py` - Member-facing content listing and (future) detail endpoints.
+- `backend/tests/test_content_member.py` - Backend tests for member content listing.
 - `backend/app/api/routes/auth.py` - Auth endpoints (register, verify, login, refresh, password reset).
 - `backend/app/api/routes/profile.py` - Profile CRUD and privacy routes.
 - `backend/app/api/routes/content.py` - Member-facing content browse/detail/engagement routes.
 - `backend/app/api/routes/admin.py` - Admin content management and audit log endpoints.
 - `backend/app/services/auth_service.py` - Business logic for auth flows, token management.
+- `backend/app/services/content_service.py` - Business logic for content CRUD, publishing, and archival.
+- `backend/app/services/comment_service.py` - Comment creation, update, and soft delete logic.
+- `backend/app/services/like_service.py` - Helpers for liking/unliking content with uniqueness checks.
+- `backend/app/services/download_service.py` - Generates signed download tokens for content files.
 - `backend/app/services/notification_service.py` - Notification provider abstraction + stub implementation.
 - `backend/app/services/audit_service.py` - Helper for persisting audit log entries across modules.
 - `backend/app/services/profile_service.py` - Profile retrieval and update business logic.
@@ -21,9 +29,11 @@
 - `backend/app/utils/rate_limiter.py` - In-process rate limiter state for auth endpoints.
 - `backend/app/middleware/rate_limit.py` - Middleware enforcing auth endpoint rate limits.
 - `backend/app/dependencies.py` - Shared FastAPI dependencies (auth, DB helpers).
-- `backend/app/utils/files.py` - Helpers for avatar storage and image resizing.
+- `backend/app/utils/files.py` - Helpers for media storage (avatars, content files).
 - `backend/tests/test_auth.py` - Backend tests covering auth/session flows.
 - `backend/tests/test_profile.py` - Backend tests validating profile endpoints.
+- `backend/tests/test_content_admin.py` - Backend tests for admin content CRUD endpoints.
+- `backend/tests/test_content_member.py` - Backend tests for member content listing, detail, likes, and comments.
 - `backend/alembic/versions/0003_add_user_admin_and_privacy_defaults.py` - Migration adding admin flag and privacy defaults.
 - `backend/scripts/seed_dev.py` - Seeds admin user and categories for development environments.
 - `backend/tests/test_profiles.py` - Tests for profile privacy and update flows.
@@ -103,11 +113,11 @@
   - [x] 3.4 Implement notification preference toggles (content/community/account) and expose settings endpoint.
 
 - [ ] 4.0 Backend Content Library, Engagement & Admin Tools
-  - [ ] 4.1 Build admin content CRUD endpoints (create, update, archive) with metadata validation and file storage.
-  - [ ] 4.2 Implement member-facing content listing with filters, search, pagination, and response DTOs.
-  - [ ] 4.3 Implement content detail endpoint with signed download token generation and download logging.
-  - [ ] 4.4 Implement likes/comments endpoints with ownership checks, sanitization, and counter updates.
-  - [ ] 4.5 Ensure all content actions emit audit log entries for traceability.
+  - [x] 4.1 Build admin content CRUD endpoints (create, update, archive) with metadata validation and file storage.
+  - [x] 4.2 Implement member-facing content listing with filters, search, pagination, and response DTOs.
+  - [x] 4.3 Implement content detail endpoint with signed download token generation and download logging.
+  - [x] 4.4 Implement likes/comments endpoints with ownership checks, sanitization, and counter updates.
+  - [x] 4.5 Ensure all content actions emit audit log entries for traceability.
 
 - [ ] 5.0 Backend Notifications Stub & Audit Logging
   - [ ] 5.1 Implement notification provider interface and default stub that logs payloads.
