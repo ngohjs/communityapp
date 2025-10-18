@@ -30,8 +30,12 @@
 - `backend/app/middleware/rate_limit.py` - Middleware enforcing auth endpoint rate limits.
 - `backend/app/dependencies.py` - Shared FastAPI dependencies (auth, DB helpers).
 - `backend/app/utils/files.py` - Helpers for media storage (avatars, content files).
+- `backend/app/services/notification_service.py` - Notification provider abstraction and stub implementation.
+- `backend/app/schemas/audit.py` - Response schemas for audit log API.
 - `backend/tests/test_auth.py` - Backend tests covering auth/session flows.
 - `backend/tests/test_profile.py` - Backend tests validating profile endpoints.
+- `backend/tests/test_notification_service.py` - Tests for notification provider stub behaviour.
+- `backend/tests/test_admin_audit.py` - Tests covering audit log admin API filters and pagination.
 - `backend/tests/test_content_admin.py` - Backend tests for admin content CRUD endpoints.
 - `backend/tests/test_content_member.py` - Backend tests for member content listing, detail, likes, and comments.
 - `backend/alembic/versions/0003_add_user_admin_and_privacy_defaults.py` - Migration adding admin flag and privacy defaults.
@@ -136,10 +140,10 @@
   - [x] 4.4 Implement likes/comments endpoints with ownership checks, sanitization, and counter updates.
   - [x] 4.5 Ensure all content actions emit audit log entries for traceability.
 
-- [ ] 5.0 Backend Notifications Stub & Audit Logging
-  - [ ] 5.1 Implement notification provider interface and default stub that logs payloads.
-  - [ ] 5.2 Integrate notification triggers for key events (registration, verified account, new admin content) respecting user opt-in flags.
-  - [ ] 5.3 Build audit log service/API endpoint for admins with pagination and filters.
+- [x] 5.0 Backend Notifications Stub & Audit Logging
+  - [x] 5.1 Implement notification provider interface and default stub that logs payloads.
+  - [x] 5.2 Integrate notification triggers for key events (registration, verified account, new admin content) respecting user opt-in flags.
+  - [x] 5.3 Build audit log service/API endpoint for admins with pagination and filters.
 
 - [x] 6.0 Frontend Application Shell & Core Auth Flows
   - [x] 6.1 Replace CRA scaffold with Vite + React 19 + TypeScript + Tailwind configuration.

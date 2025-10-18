@@ -12,7 +12,10 @@ from ..models.password_reset import PasswordResetToken
 from ..models.session import UserSession
 from ..models.user import User, UserStatus
 from ..services.audit_service import log_action
-from ..services.notification_service import send_password_reset_email
+from ..services.notification_service import (
+    send_account_verified_email,
+    send_password_reset_email,
+)
 from ..security import (
     TokenError,
     create_access_token,
@@ -109,6 +112,7 @@ class AuthService:
             db.commit()
             db.refresh(user)
             activated = True
+            send_account_verified_email(user)
 
         return user, activated
 

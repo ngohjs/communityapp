@@ -1,20 +1,23 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, Query, status
 from sqlalchemy.orm import Session
 
 from ...dependencies import get_current_admin, get_db
 from ...models.content import ContentItem, ContentStatus
 from ...models.user import User
+from ...schemas.audit import AuditLogActor, AuditLogEntry, AuditLogListResponse
 from ...schemas.content import (
     AdminContentListResponse,
     AdminContentResponse,
     ContentUpdateRequest,
     ContentUpdateResponse,
 )
+from ...services.audit_service import list_logs as list_audit_logs
 from ...services.content_service import ContentService
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -122,3 +125,45 @@ def archive_content(
 
     archived = ContentService.archive_content(db, content=content, actor=admin)
     return AdminContentResponse.model_validate(archived)
+
+
+@router.get("/audit/logs", response_model=AuditLogListResponse)
+def get_audit_logs(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(50, ge=1, le=100),
+    action_type: Optional[str] = None,
+    start_at: Optional[datetime] = None,
+    end_at: Optional[datetime] = None,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin),
+) -> AuditLogListResponse:
+    logs, total = list_audit_logs(
+        db,
+        page=page,
+        page_size=page_size,
+        action_type=action_type,
+        start_at=start_at,
+        end_at=end_at,
+    )
+
+    items = [
+        AuditLogEntry(
+            id=str(log.id),
+            action_type=log.action_type,
+            target_type=log.target_type,
+            target_id=log.target_id,
+            metadata=log.metadata_json,
+            created_at=log.created_at,
+            actor=AuditLogActor(
+                id=str(log.actor.id) if log.actor else None,
+                email=log.actor.email if log.actor else None,
+                first_name=log.actor.first_name if log.actor else None,
+                last_name=log.actor.last_name if log.actor else None,
+            )
+            if log.actor
+            else None,
+        )
+        for log in logs
+    ]
+
+    return AuditLogListResponse(items=items, page=page, page_size=page_size, total=total)

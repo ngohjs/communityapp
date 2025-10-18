@@ -13,6 +13,7 @@ from backend.app.database import Base, get_db
 from backend.app.main import app
 from backend.app.config import get_settings
 from backend.app.utils.rate_limiter import reset_auth_rate_limiter
+from backend.app.services.notification_service import NotificationMessage, NotificationProvider, set_notification_provider
 
 
 PASSWORD_RESET_LOGGER = "backend.app.services.notification_service"
@@ -53,7 +54,7 @@ def client():
     app.dependency_overrides.clear()
 
 
-def test_register_and_verify_flow(client: TestClient):
+def test_register_and_verify_flow(client: TestClient, notification_recorder: RecordingProvider):
     payload = {
         "email": "user@example.com",
         "first_name": "User",
@@ -66,6 +67,9 @@ def test_register_and_verify_flow(client: TestClient):
     body = response.json()
     assert body["status"] == "pending"
     assert "verification_token" in body
+    assert len(notification_recorder.messages) == 1
+    registration_message = notification_recorder.messages[0]
+    assert registration_message.template == "auth.verify_email"
 
     token = body["verification_token"]
 
@@ -74,10 +78,13 @@ def test_register_and_verify_flow(client: TestClient):
     verify_body = verify_response.json()
     assert verify_body["status"] == "active"
     assert verify_body["verified"] is True
+    assert len(notification_recorder.messages) == 2
+    assert notification_recorder.messages[1].template == "auth.account_verified"
 
     second_verify = client.get("/auth/verify", params={"token": token})
     assert second_verify.status_code == 200
     assert second_verify.json()["verified"] is False
+    assert len(notification_recorder.messages) == 2
 
 
 def test_register_duplicate_email(client: TestClient):
@@ -182,6 +189,9 @@ def _extract_reset_token(caplog) -> str:
         token = getattr(record, "token", None)
         if token:
             return token
+        context = getattr(record, "context", None)
+        if isinstance(context, dict) and "token" in context:
+            return context["token"]
     raise AssertionError("Password reset token not logged")
 
 
@@ -257,3 +267,19 @@ def test_login_rate_limit_exceeded(client: TestClient):
     )
     assert blocked.status_code == 429
     assert blocked.json()["detail"].startswith("Too many requests")
+class RecordingProvider(NotificationProvider):
+    def __init__(self) -> None:
+        self.messages: list[NotificationMessage] = []
+
+    def send(self, message: NotificationMessage) -> None:
+        self.messages.append(message)
+
+
+@pytest.fixture
+def notification_recorder():
+    provider = RecordingProvider()
+    set_notification_provider(provider)
+    try:
+        yield provider
+    finally:
+        set_notification_provider(None)

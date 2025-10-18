@@ -72,6 +72,11 @@ class Settings(BaseSettings):
         description="Default categories seeded in development",
     )
 
+    notification_provider: str = Field(
+        default="logging",
+        description="Notification provider backend to use (e.g., logging, sendgrid, twilio)",
+    )
+
     @field_validator("cors_origins", "allowed_hosts", mode="before")
     @classmethod
     def split_comma_separated(cls, value: str | List[str]) -> List[str]:

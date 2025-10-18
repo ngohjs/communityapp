@@ -19,6 +19,7 @@ from ...schemas.auth import (
     VerifyEmailResponse,
 )
 from ...services.auth_service import AuthService
+from ...services.notification_service import send_verification_email
 
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -40,6 +41,7 @@ def register(payload: RegisterRequest, db: Session = Depends(get_db)) -> Registe
         raise
 
     verification_token = AuthService.generate_verification_token(user)
+    send_verification_email(user, verification_token)
 
     return RegisterResponse(
         id=str(user.id),
