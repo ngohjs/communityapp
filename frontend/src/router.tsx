@@ -9,6 +9,10 @@ import LogoutPage from "./routes/auth/LogoutPage";
 import RegisterPage from "./routes/auth/RegisterPage";
 import ResetPasswordPage from "./routes/auth/ResetPasswordPage";
 import VerifyEmailPage from "./routes/auth/VerifyEmailPage";
+import ProfilePage from "./routes/profile/ProfilePage";
+import EditProfilePage from "./routes/profile/EditProfilePage";
+import SettingsPage from "./routes/profile/SettingsPage";
+import ViewProfilePage from "./routes/profile/ViewProfilePage";
 
 export const router = createBrowserRouter([
   {
@@ -42,6 +46,22 @@ export const router = createBrowserRouter([
       {
         path: "auth/logout",
         element: <LogoutPage />
+      },
+      {
+        path: "profile",
+        element: <ProfilePage />
+      },
+      {
+        path: "profile/edit",
+        element: <EditProfilePage />
+      },
+      {
+        path: "profile/settings",
+        element: <SettingsPage />
+      },
+      {
+        path: "profile/:userId",
+        element: <ViewProfilePage />
       },
       {
         path: "*",

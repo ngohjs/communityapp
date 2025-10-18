@@ -24,6 +24,18 @@ function HomePage() {
 
       <div className="flex flex-wrap gap-3">
         <Link
+          to="/profile"
+          className="rounded-lg border border-slate-700 px-5 py-3 text-sm font-semibold text-white transition hover:border-slate-500 hover:text-slate-100"
+        >
+          My Profile
+        </Link>
+        <Link
+          to="/profile/settings"
+          className="rounded-lg border border-slate-800 px-5 py-3 text-sm font-semibold text-slate-300 transition hover:border-slate-600 hover:text-white"
+        >
+          Settings
+        </Link>
+        <Link
           to="/auth/login"
           className="rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-brand-foreground shadow-lg shadow-brand/30 transition hover:bg-indigo-500"
         >

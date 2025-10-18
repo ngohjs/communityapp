@@ -35,6 +35,7 @@
 - `backend/tests/test_content_admin.py` - Backend tests for admin content CRUD endpoints.
 - `backend/tests/test_content_member.py` - Backend tests for member content listing, detail, likes, and comments.
 - `backend/alembic/versions/0003_add_user_admin_and_privacy_defaults.py` - Migration adding admin flag and privacy defaults.
+- `backend/.env` - Local environment overrides (e.g., database connection string).
 - `backend/scripts/seed_dev.py` - Seeds admin user and categories for development environments.
 - `backend/tests/test_profiles.py` - Tests for profile privacy and update flows.
 - `backend/tests/test_content.py` - Tests for content listing, engagement, and admin operations.
@@ -52,9 +53,11 @@
 - `frontend/src/index.css` - Global styles loaded by Vite with Tailwind layers.
 - `frontend/src/lib/react-query.ts` - Shared TanStack Query client and defaults.
 - `frontend/src/lib/api/client.ts` - Axios/TanStack Query client with auth interceptors.
+- `frontend/src/lib/api/profile.ts` - Helpers for profile fetch/update and avatar upload.
+- `frontend/src/hooks/useProfileQuery.ts` - React Query hooks for profile data/mutations.
 - `frontend/src/router.tsx` - Route configuration for application shell and feature modules.
 - `frontend/src/layouts/AppLayout.tsx` - Top-level layout with header/footer shell.
-- `frontend/src/routes/HomePage.tsx` - Placeholder landing page linking to auth flows.
+- `frontend/src/routes/HomePage.tsx` - Landing page linking to auth/profile flows.
 - `frontend/src/providers/AuthProvider.tsx` - Auth context managing tokens and session refresh.
 - `frontend/src/routes/NotFoundPage.tsx` - 404 experience with navigation recovery.
 - `frontend/src/routes/auth/LoginPage.tsx` - Login form integrating with auth context.
@@ -66,6 +69,7 @@
 - `frontend/src/routes/profile/ProfilePage.tsx` - Profile view with privacy-aware rendering.
 - `frontend/src/routes/profile/EditProfilePage.tsx` - Profile edit form, avatar upload.
 - `frontend/src/routes/profile/SettingsPage.tsx` - Notification and privacy settings UI.
+- `frontend/src/routes/profile/ViewProfilePage.tsx` - Member profile view respecting privacy states.
 - `frontend/src/routes/content/LibraryPage.tsx` - Content list with filters/search/pagination.
 - `frontend/src/routes/content/ContentDetailPage.tsx` - Content detail, likes, comments, download.
 - `frontend/src/routes/admin/AdminContentDashboard.tsx` - Admin CRUD interface for content.
@@ -143,10 +147,10 @@
   - [x] 6.3 Implement registration, email verification, login, logout, forgot/reset password pages wired to backend.
   - [x] 6.4 Implement auth context/token refresh handling with Axios interceptors for HttpOnly cookie refresh process.
 
-- [ ] 7.0 Frontend Profile Management & Settings
-  - [ ] 7.1 Build profile view/edit forms with validation, avatar uploader, and API integration.
-  - [ ] 7.2 Implement privacy level selector and notification preference toggles with optimistic UI updates.
-  - [ ] 7.3 Ensure viewing other profiles respects privacy states; handle unauthorized/hidden cases gracefully.
+- [x] 7.0 Frontend Profile Management & Settings
+  - [x] 7.1 Build profile view/edit forms with validation, avatar uploader, and API integration.
+  - [x] 7.2 Implement privacy level selector and notification preference toggles with optimistic UI updates.
+  - [x] 7.3 Ensure viewing other profiles respects privacy states; handle unauthorized/hidden cases gracefully.
 
 - [ ] 8.0 Frontend Content Experience & Admin Dashboard
   - [ ] 8.1 Create content library page with filters, search, empty states, and pagination controls.

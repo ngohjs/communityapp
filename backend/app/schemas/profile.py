@@ -22,6 +22,9 @@ class ProfileResponse(BaseModel):
     last_completed_at: Optional[datetime]
     updated_at: Optional[datetime]
     privacy_level: Optional[str]
+    notify_content: Optional[bool]
+    notify_community: Optional[bool]
+    notify_account: Optional[bool]
 
 
 class ProfileUpdateRequest(BaseModel):

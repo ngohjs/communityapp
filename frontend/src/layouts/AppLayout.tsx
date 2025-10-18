@@ -2,19 +2,6 @@ import { NavLink, Outlet } from "react-router-dom";
 
 import { useAuth } from "@/providers/AuthProvider";
 
-const primaryLinks = [
-  { to: "/", label: "Home" },
-  { to: "/auth/login", label: "Login" },
-  { to: "/auth/register", label: "Register" }
-];
-
-const secondaryLinks = [
-  { to: "/auth/verify-email", label: "Verify Email" },
-  { to: "/auth/forgot-password", label: "Forgot Password" },
-  { to: "/auth/reset-password", label: "Reset Password" },
-  { to: "/auth/logout", label: "Logout" }
-];
-
 const linkClassName = ({ isActive }: { isActive: boolean }) =>
   [
     "rounded-md px-3 py-2 text-sm font-semibold transition-colors",
@@ -23,6 +10,25 @@ const linkClassName = ({ isActive }: { isActive: boolean }) =>
 
 function AppLayout() {
   const { user, isAuthenticated } = useAuth();
+  const primaryLinks = [
+    { to: "/", label: "Home" },
+    { to: "/profile", label: "My Profile" },
+    ...(isAuthenticated
+      ? [{ to: "/profile/settings", label: "Settings" }]
+      : []),
+    ...(!isAuthenticated
+      ? [
+          { to: "/auth/login", label: "Login" },
+          { to: "/auth/register", label: "Register" }
+        ]
+      : [])
+  ];
+  const secondaryLinks = [
+    { to: "/auth/verify-email", label: "Verify Email" },
+    { to: "/auth/forgot-password", label: "Forgot Password" },
+    { to: "/auth/reset-password", label: "Reset Password" },
+    ...(isAuthenticated ? [{ to: "/auth/logout", label: "Logout" }] : [])
+  ];
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
