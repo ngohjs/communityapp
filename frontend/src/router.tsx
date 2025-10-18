@@ -12,6 +12,7 @@ import VerifyEmailPage from "./routes/auth/VerifyEmailPage";
 import ContentDetailPage from "./routes/content/ContentDetailPage";
 import LibraryPage from "./routes/content/LibraryPage";
 import AdminContentDashboard from "./routes/admin/AdminContentDashboard";
+import AuditLogPage from "./routes/admin/AuditLogPage";
 import ProfilePage from "./routes/profile/ProfilePage";
 import EditProfilePage from "./routes/profile/EditProfilePage";
 import SettingsPage from "./routes/profile/SettingsPage";
@@ -85,6 +86,10 @@ export const router = createBrowserRouter([
           {
             path: "content",
             element: <AdminContentDashboard />
+          },
+          {
+            path: "audit",
+            element: <AuditLogPage />
           }
         ]
       },
