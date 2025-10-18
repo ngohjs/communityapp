@@ -61,6 +61,7 @@
 - `frontend/src/lib/api/content.ts` - Helpers for content list/detail API calls.
 - `frontend/src/hooks/useProfileQuery.ts` - React Query hooks for profile data/mutations.
 - `frontend/src/hooks/useContentLibrary.ts` - React Query hooks for content listing filters.
+- `frontend/src/hooks/useContentDetail.ts` - React Query hooks for content detail, likes, and comments.
 - `frontend/src/router.tsx` - Route configuration for application shell and feature modules.
 - `frontend/src/layouts/AppLayout.tsx` - Top-level layout with header/footer shell.
 - `frontend/src/routes/HomePage.tsx` - Landing page linking to auth/profile flows.
@@ -162,7 +163,7 @@
 
 - [ ] 8.0 Frontend Content Experience & Admin Dashboard
   - [x] 8.1 Create content library page with filters, search, empty states, and pagination controls.
-  - [ ] 8.2 Build content detail page with preview metadata, likes/comments UI, and download action.
+  - [x] 8.2 Build content detail page with preview metadata, likes/comments UI, and download action.
   - [ ] 8.3 Build admin dashboard for content upload/edit/archive, including file validation and progress feedback.
   - [ ] 8.4 Implement admin audit log viewer with filter controls and pagination.
 

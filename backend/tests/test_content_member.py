@@ -120,6 +120,7 @@ def test_list_content_defaults(client: TestClient, session):
     assert body["total"] == 2
     titles = [item["title"] for item in body["items"]]
     assert "Draft Doc" not in titles
+    assert all("category_name" in item for item in body["items"])
     assert all(item["likes_count"] == 0 and item["comments_count"] == 0 for item in body["items"])
     assert all("updated_at" in item for item in body["items"])
 
@@ -159,6 +160,7 @@ def test_list_content_filters_and_search(client: TestClient, session):
     body = response.json()
     assert body["total"] == 1
     assert body["items"][0]["title"] == "Marketing Playbook"
+    assert body["items"][0]["category_name"] == "Marketing"
 
     response = client.get("/content", params={"search": "sales"})
     assert response.status_code == 200
@@ -188,7 +190,10 @@ def test_content_detail_and_download(client: TestClient, session):
 
     detail = client.get(f"/content/{content.id}")
     assert detail.status_code == 200
-    assert detail.json()["title"] == "Reference Guide"
+    detail_body = detail.json()
+    assert detail_body["title"] == "Reference Guide"
+    assert detail_body["liked_by_me"] is False
+    assert detail_body["category_name"] is None
 
     download = client.post(f"/content/{content.id}/download")
     assert download.status_code == 200

@@ -89,10 +89,12 @@ def list_content(
             ContentItem,
             func.coalesce(likes_subq.c.likes_count, 0).label("likes_count"),
             func.coalesce(comments_subq.c.comments_count, 0).label("comments_count"),
+            Category.name.label("category_name"),
         )
         .filter(*filters)
         .outerjoin(likes_subq, ContentItem.id == likes_subq.c.content_id)
         .outerjoin(comments_subq, ContentItem.id == comments_subq.c.content_id)
+        .outerjoin(Category, ContentItem.category_id == Category.id)
     )
 
     base_total_query = db.query(func.count(ContentItem.id)).filter(*filters)
@@ -113,6 +115,7 @@ def list_content(
                 file_type=content.file_type,
                 file_size=content.file_size,
                 category_id=content.category_id,
+                category_name=category_name,
                 published_at=content.published_at,
                 created_at=content.created_at,
                 updated_at=content.updated_at,
@@ -120,7 +123,7 @@ def list_content(
                 likes_count=likes_count,
                 comments_count=comments_count,
             )
-            for content, likes_count, comments_count in records
+            for content, likes_count, comments_count, category_name in records
         ],
         total=total,
         page=page,
@@ -153,6 +156,18 @@ def get_content_detail(
         .filter(Comment.content_id == content.id, Comment.status == CommentStatus.active.value)
         .count()
     )
+    liked_by_me = (
+        db.query(Like)
+        .filter(Like.content_id == content.id, Like.user_id == current_user.id)
+        .first()
+        is not None
+    )
+    category_name = content.category.name if content.category else None
+    owner_name = None
+    if content.owner:
+        owner_name = " ".join(filter(None, [content.owner.first_name, content.owner.last_name])).strip()
+        if not owner_name:
+            owner_name = content.owner.email
 
     return MemberContentDetailResponse(
         id=content.id,
@@ -161,6 +176,7 @@ def get_content_detail(
         file_type=content.file_type,
         file_size=content.file_size,
         category_id=content.category_id,
+        category_name=category_name,
         published_at=content.published_at,
         created_at=content.created_at,
         updated_at=content.updated_at,
@@ -168,6 +184,8 @@ def get_content_detail(
         status=ContentStatus(content.status),
         likes_count=likes_count,
         comments_count=comments_count,
+        liked_by_me=liked_by_me,
+        owner_name=owner_name,
     )
 
 

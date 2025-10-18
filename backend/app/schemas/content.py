@@ -48,6 +48,7 @@ class MemberContentResponse(BaseModel):
     file_type: str
     file_size: Optional[int]
     category_id: Optional[UUID]
+    category_name: Optional[str]
     published_at: Optional[datetime]
     created_at: datetime
     owner_id: Optional[UUID]
@@ -67,6 +68,8 @@ class MemberContentListResponse(BaseModel):
 
 class MemberContentDetailResponse(MemberContentResponse):
     status: ContentStatus
+    liked_by_me: bool
+    owner_name: Optional[str]
 
 
 class ContentDownloadResponse(BaseModel):
