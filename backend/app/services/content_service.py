@@ -12,6 +12,7 @@ from ..models.category import Category
 from ..models.content import ContentItem, ContentStatus
 from ..models.user import User
 from ..services.audit_service import log_action
+from ..services.notification_service import broadcast_content_published
 from ..utils.files import remove_file, save_content_file
 
 ALLOWED_CONTENT_TYPES = {
@@ -71,6 +72,9 @@ class ContentService:
 
         db.commit()
         db.refresh(content)
+
+        if status == ContentStatus.published:
+            broadcast_content_published(db, content=content, actor_id=owner.id)
         return content
 
     @staticmethod
@@ -85,6 +89,8 @@ class ContentService:
         status: Optional[ContentStatus] = None,
     ) -> ContentItem:
         updates: dict[str, object] = {}
+        original_status = ContentStatus(content.status)
+        publish_now = False
 
         if title is not None:
             content.title = title
@@ -102,6 +108,7 @@ class ContentService:
                 content.published_at = datetime.now(timezone.utc)
             if status == ContentStatus.draft:
                 content.published_at = None
+            publish_now = status == ContentStatus.published and original_status != ContentStatus.published
             updates["status"] = status.value
 
         if updates:
@@ -116,6 +123,9 @@ class ContentService:
             )
             db.commit()
             db.refresh(content)
+
+            if publish_now:
+                broadcast_content_published(db, content=content, actor_id=actor.id)
 
         return content
 
