@@ -12,13 +12,12 @@ function HomePage() {
           {isAuthenticated ? `Welcome back, ${user?.first_name}!` : "Welcome to the Community App"}
         </h1>
         <p className="text-base text-slate-300 md:text-lg">
-          The frontend now includes live authentication flows wired to the FastAPI backend. Explore the
-          registration, verification, login, logout, and password recovery screens to verify the end-to-end
-          experience.
+          Browse the community content library, review your profile, or manage notification preferences—all
+          wired end-to-end with the FastAPI backend.
         </p>
         <p className="text-sm text-slate-400">
-          The next sub-task introduces persistent auth context with token refresh handling so the SPA can stay
-          in sync with the backend session.
+          Use the quick links below to explore key areas. The content library now supports filters, search, and
+          pagination so members can quickly find relevant resources.
         </p>
       </div>
 
@@ -28,6 +27,12 @@ function HomePage() {
           className="rounded-lg border border-slate-700 px-5 py-3 text-sm font-semibold text-white transition hover:border-slate-500 hover:text-slate-100"
         >
           My Profile
+        </Link>
+        <Link
+          to="/content"
+          className="rounded-lg border border-slate-700 px-5 py-3 text-sm font-semibold text-white transition hover:border-slate-500 hover:text-slate-100"
+        >
+          Browse Content
         </Link>
         <Link
           to="/profile/settings"

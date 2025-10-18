@@ -9,6 +9,8 @@ import LogoutPage from "./routes/auth/LogoutPage";
 import RegisterPage from "./routes/auth/RegisterPage";
 import ResetPasswordPage from "./routes/auth/ResetPasswordPage";
 import VerifyEmailPage from "./routes/auth/VerifyEmailPage";
+import ContentDetailPage from "./routes/content/ContentDetailPage";
+import LibraryPage from "./routes/content/LibraryPage";
 import ProfilePage from "./routes/profile/ProfilePage";
 import EditProfilePage from "./routes/profile/EditProfilePage";
 import SettingsPage from "./routes/profile/SettingsPage";
@@ -62,6 +64,19 @@ export const router = createBrowserRouter([
       {
         path: "profile/:userId",
         element: <ViewProfilePage />
+      },
+      {
+        path: "content",
+        children: [
+          {
+            index: true,
+            element: <LibraryPage />
+          },
+          {
+            path: ":contentId",
+            element: <ContentDetailPage />
+          }
+        ]
       },
       {
         path: "*",

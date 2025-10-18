@@ -1,18 +1,22 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 from sqlalchemy.orm import Session
 
 from ...dependencies import get_current_user, get_db
 from ...models.comment import Comment, CommentStatus
 from ...models.content import ContentItem, ContentStatus
+from ...models.category import Category
 from ...models.like import Like
 from ...models.user import User
 from ...schemas.content import (
+    ContentCategoryListResponse,
+    ContentCategoryResponse,
     ContentDownloadResponse,
     MemberContentDetailResponse,
     MemberContentListResponse,
@@ -43,20 +47,57 @@ def list_content(
     page_size: int = Query(12, ge=1, le=50),
     category_id: Optional[UUID] = Query(None),
     search: Optional[str] = Query(None),
+    content_type: Optional[str] = Query(None),
+    uploaded_after: Optional[datetime] = Query(None),
+    uploaded_before: Optional[datetime] = Query(None),
 ) -> MemberContentListResponse:
-    query = db.query(ContentItem).filter(ContentItem.status == ContentStatus.published.value)
+    filters = [ContentItem.status == ContentStatus.published.value]
 
     if category_id:
-        query = query.filter(ContentItem.category_id == category_id)
+        filters.append(ContentItem.category_id == category_id)
 
     if search:
         ilike = f"%{search}%"
-        query = query.filter(
-            ContentItem.title.ilike(ilike) | ContentItem.description.ilike(ilike)
-        )
+        filters.append(ContentItem.title.ilike(ilike) | ContentItem.description.ilike(ilike))
 
-    total = query.count()
-    items = (
+    if content_type:
+        filters.append(ContentItem.file_type == content_type.lower())
+
+    if uploaded_after:
+        filters.append(ContentItem.created_at >= uploaded_after)
+
+    if uploaded_before:
+        filters.append(ContentItem.created_at <= uploaded_before)
+
+    likes_subq = (
+        db.query(Like.content_id.label("content_id"), func.count(Like.id).label("likes_count"))
+        .group_by(Like.content_id)
+        .subquery()
+    )
+    comments_subq = (
+        db.query(
+            Comment.content_id.label("content_id"),
+            func.count(Comment.id).label("comments_count"),
+        )
+        .filter(Comment.status == CommentStatus.active.value)
+        .group_by(Comment.content_id)
+        .subquery()
+    )
+
+    query = (
+        db.query(
+            ContentItem,
+            func.coalesce(likes_subq.c.likes_count, 0).label("likes_count"),
+            func.coalesce(comments_subq.c.comments_count, 0).label("comments_count"),
+        )
+        .filter(*filters)
+        .outerjoin(likes_subq, ContentItem.id == likes_subq.c.content_id)
+        .outerjoin(comments_subq, ContentItem.id == comments_subq.c.content_id)
+    )
+
+    base_total_query = db.query(func.count(ContentItem.id)).filter(*filters)
+    total = base_total_query.scalar()
+    records = (
         query.order_by(desc(ContentItem.published_at), desc(ContentItem.created_at))
         .offset((page - 1) * page_size)
         .limit(page_size)
@@ -64,10 +105,37 @@ def list_content(
     )
 
     return MemberContentListResponse(
-        items=[MemberContentResponse.model_validate(item) for item in items],
+        items=[
+            MemberContentResponse(
+                id=content.id,
+                title=content.title,
+                description=content.description,
+                file_type=content.file_type,
+                file_size=content.file_size,
+                category_id=content.category_id,
+                published_at=content.published_at,
+                created_at=content.created_at,
+                updated_at=content.updated_at,
+                owner_id=content.owner_id,
+                likes_count=likes_count,
+                comments_count=comments_count,
+            )
+            for content, likes_count, comments_count in records
+        ],
         total=total,
         page=page,
         page_size=page_size,
+    )
+
+
+@router.get("/categories", response_model=ContentCategoryListResponse)
+def list_categories(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> ContentCategoryListResponse:
+    categories = db.query(Category).order_by(Category.name.asc()).all()
+    return ContentCategoryListResponse(
+        items=[ContentCategoryResponse.model_validate(category) for category in categories]
     )
 
 
@@ -95,6 +163,7 @@ def get_content_detail(
         category_id=content.category_id,
         published_at=content.published_at,
         created_at=content.created_at,
+        updated_at=content.updated_at,
         owner_id=content.owner_id,
         status=ContentStatus(content.status),
         likes_count=likes_count,

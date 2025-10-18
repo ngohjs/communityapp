@@ -58,10 +58,14 @@
 - `frontend/src/lib/react-query.ts` - Shared TanStack Query client and defaults.
 - `frontend/src/lib/api/client.ts` - Axios/TanStack Query client with auth interceptors.
 - `frontend/src/lib/api/profile.ts` - Helpers for profile fetch/update and avatar upload.
+- `frontend/src/lib/api/content.ts` - Helpers for content list/detail API calls.
 - `frontend/src/hooks/useProfileQuery.ts` - React Query hooks for profile data/mutations.
+- `frontend/src/hooks/useContentLibrary.ts` - React Query hooks for content listing filters.
 - `frontend/src/router.tsx` - Route configuration for application shell and feature modules.
 - `frontend/src/layouts/AppLayout.tsx` - Top-level layout with header/footer shell.
 - `frontend/src/routes/HomePage.tsx` - Landing page linking to auth/profile flows.
+- `frontend/src/routes/content/LibraryPage.tsx` - Member content library with filters/search/pagination.
+- `frontend/src/routes/content/ContentDetailPage.tsx` - Placeholder for content detail view.
 - `frontend/src/providers/AuthProvider.tsx` - Auth context managing tokens and session refresh.
 - `frontend/src/routes/NotFoundPage.tsx` - 404 experience with navigation recovery.
 - `frontend/src/routes/auth/LoginPage.tsx` - Login form integrating with auth context.
@@ -157,7 +161,7 @@
   - [x] 7.3 Ensure viewing other profiles respects privacy states; handle unauthorized/hidden cases gracefully.
 
 - [ ] 8.0 Frontend Content Experience & Admin Dashboard
-  - [ ] 8.1 Create content library page with filters, search, empty states, and pagination controls.
+  - [x] 8.1 Create content library page with filters, search, empty states, and pagination controls.
   - [ ] 8.2 Build content detail page with preview metadata, likes/comments UI, and download action.
   - [ ] 8.3 Build admin dashboard for content upload/edit/archive, including file validation and progress feedback.
   - [ ] 8.4 Implement admin audit log viewer with filter controls and pagination.

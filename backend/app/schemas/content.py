@@ -51,6 +51,9 @@ class MemberContentResponse(BaseModel):
     published_at: Optional[datetime]
     created_at: datetime
     owner_id: Optional[UUID]
+    updated_at: datetime
+    likes_count: int
+    comments_count: int
 
     model_config = {"from_attributes": True}
 
@@ -64,10 +67,20 @@ class MemberContentListResponse(BaseModel):
 
 class MemberContentDetailResponse(MemberContentResponse):
     status: ContentStatus
-    likes_count: int
-    comments_count: int
 
 
 class ContentDownloadResponse(BaseModel):
     token: str
     expires_in: int = 300
+
+
+class ContentCategoryResponse(BaseModel):
+    id: UUID
+    name: str
+    description: Optional[str]
+
+    model_config = {"from_attributes": True}
+
+
+class ContentCategoryListResponse(BaseModel):
+    items: List[ContentCategoryResponse]
