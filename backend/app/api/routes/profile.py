@@ -58,6 +58,9 @@ def _serialize_profile(user: User) -> ProfileResponse:
         last_completed_at=profile.last_completed_at if profile else None,
         updated_at=profile.updated_at if profile else None,
         privacy_level=preferences.privacy_level if preferences else None,
+        notify_content=preferences.notify_content if preferences else None,
+        notify_community=preferences.notify_community if preferences else None,
+        notify_account=preferences.notify_account if preferences else None,
     )
 
 

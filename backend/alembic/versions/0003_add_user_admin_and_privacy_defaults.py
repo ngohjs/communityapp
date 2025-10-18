@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = "0003_add_user_admin_and_privacy_defaults"
+revision = "0003_privacy_defaults"
 down_revision = "0002_add_password_reset_tokens"
 branch_labels = None
 depends_on = None
