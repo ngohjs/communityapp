@@ -14,6 +14,7 @@ function AppLayout() {
     { to: "/", label: "Home" },
     { to: "/content", label: "Content" },
     { to: "/profile", label: "My Profile" },
+    { to: "/admin/content", label: "Admin" },
     ...(isAuthenticated
       ? [{ to: "/profile/settings", label: "Settings" }]
       : []),

@@ -68,6 +68,25 @@ export type ContentListParams = {
   uploadedBefore?: string;
 };
 
+export type AdminContent = {
+  id: string;
+  title: string;
+  description: string | null;
+  status: string;
+  file_type: string;
+  file_size: number | null;
+  category_id: string | null;
+  owner_id: string | null;
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+  file_path: string;
+};
+
+export type AdminContentListResponse = {
+  items: AdminContent[];
+};
+
 export async function fetchContentList(params: ContentListParams = {}): Promise<ContentListResponse> {
   try {
     const { data } = await apiClient.get<ContentListResponse>("/content", {
@@ -90,6 +109,72 @@ export async function fetchContentList(params: ContentListParams = {}): Promise<
 export async function fetchContentCategories(): Promise<ContentCategoryListResponse> {
   try {
     const { data } = await apiClient.get<ContentCategoryListResponse>("/content/categories");
+    return data;
+  } catch (error) {
+    throw toApiError(error);
+  }
+}
+
+export async function fetchAdminContent(): Promise<AdminContentListResponse> {
+  try {
+    const { data } = await apiClient.get<AdminContentListResponse>("/admin/content");
+    return data;
+  } catch (error) {
+    throw toApiError(error);
+  }
+}
+
+export type CreateAdminContentInput = {
+  title: string;
+  description?: string;
+  status: string;
+  categoryId?: string;
+  file: File;
+};
+
+export async function createAdminContent(payload: CreateAdminContentInput): Promise<AdminContent> {
+  try {
+    const formData = new FormData();
+    formData.append("title", payload.title);
+    if (payload.description) formData.append("description", payload.description);
+    formData.append("status_value", payload.status);
+    if (payload.categoryId) formData.append("category_id", payload.categoryId);
+    formData.append("file", payload.file);
+
+    const { data } = await apiClient.post<AdminContent>("/admin/content", formData, {
+      headers: { "Content-Type": "multipart/form-data" }
+    });
+    return data;
+  } catch (error) {
+    throw toApiError(error);
+  }
+}
+
+export type UpdateAdminContentInput = {
+  title?: string;
+  description?: string;
+  status?: string;
+  categoryId?: string;
+};
+
+export async function updateAdminContent(contentId: string, payload: UpdateAdminContentInput): Promise<AdminContent> {
+  try {
+    const body: Record<string, unknown> = {};
+    if (payload.title !== undefined) body.title = payload.title;
+    if (payload.description !== undefined) body.description = payload.description;
+    if (payload.status !== undefined) body.status = payload.status;
+    if (payload.categoryId !== undefined) body.category_id = payload.categoryId;
+
+    const { data } = await apiClient.patch<AdminContent>(`/admin/content/${contentId}`, body);
+    return data;
+  } catch (error) {
+    throw toApiError(error);
+  }
+}
+
+export async function archiveAdminContent(contentId: string): Promise<AdminContent> {
+  try {
+    const { data } = await apiClient.patch<AdminContent>(`/admin/content/${contentId}/archive`);
     return data;
   } catch (error) {
     throw toApiError(error);
