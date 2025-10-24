@@ -166,7 +166,7 @@
   - [x] 7.2 Implement privacy level selector and notification preference toggles with optimistic UI updates.
   - [x] 7.3 Ensure viewing other profiles respects privacy states; handle unauthorized/hidden cases gracefully.
 
-- [ ] 8.0 Frontend Content Experience & Admin Dashboard
+- [x] 8.0 Frontend Content Experience & Admin Dashboard
   - [x] 8.1 Create content library page with filters, search, empty states, and pagination controls.
   - [x] 8.2 Build content detail page with preview metadata, likes/comments UI, and download action.
   - [x] 8.3 Build admin dashboard for content upload/edit/archive, including file validation and progress feedback.
