@@ -69,8 +69,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return handleAuthSuccess(data);
       } catch (error) {
         const apiError = toApiError(error);
-        setLastError(apiError.message);
-        throw error;
+        const friendlyMessage =
+          apiError.status === 429
+            ? "Too many login attempts. Please wait 15 minutes before trying again."
+            : apiError.message;
+        setLastError(friendlyMessage);
+        throw new Error(friendlyMessage);
       }
     },
     [handleAuthSuccess]

@@ -1,6 +1,10 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
+from typing import Optional
+from uuid import UUID
+
 import backend.app.models  # noqa: F401 - ensure metadata import
 import pytest
 from fastapi.testclient import TestClient
@@ -8,8 +12,6 @@ from jose import jwt
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-from typing import Optional
-from uuid import UUID
 
 from backend.app.config import get_settings
 from backend.app.database import Base, get_db
@@ -78,18 +80,26 @@ def _create_user(session) -> User:
     return user
 
 
-from typing import Optional
-
-
-def _create_content(session, *, title: str, status: ContentStatus, category: Optional[Category] = None):
+def _create_content(
+    session,
+    *,
+    title: str,
+    status: ContentStatus,
+    category: Optional[Category] = None,
+    file_type: str = "pdf",
+    created_at: Optional[datetime] = None,
+):
     content = ContentItem(
         title=title,
         description=f"Description for {title}",
         status=status.value,
         file_path=f"content/{title}.pdf",
-        file_type="pdf",
+        file_type=file_type,
         category_id=category.id if category else None,
     )
+    if created_at:
+        content.created_at = created_at
+        content.updated_at = created_at
     session.add(content)
     session.commit()
     session.refresh(content)
@@ -110,6 +120,9 @@ def test_list_content_defaults(client: TestClient, session):
     assert body["total"] == 2
     titles = [item["title"] for item in body["items"]]
     assert "Draft Doc" not in titles
+    assert all("category_name" in item for item in body["items"])
+    assert all(item["likes_count"] == 0 and item["comments_count"] == 0 for item in body["items"])
+    assert all("updated_at" in item for item in body["items"])
 
     app.dependency_overrides.pop(get_current_user, None)
 
@@ -125,20 +138,46 @@ def test_list_content_filters_and_search(client: TestClient, session):
     session.refresh(marketing)
     session.refresh(sales)
 
-    _create_content(session, title="Marketing Playbook", status=ContentStatus.published, category=marketing)
-    _create_content(session, title="Sales Deck", status=ContentStatus.published, category=sales)
+    older = datetime.now(tz=timezone.utc) - timedelta(days=7)
+    _create_content(
+        session,
+        title="Marketing Playbook",
+        status=ContentStatus.published,
+        category=marketing,
+        file_type="pdf",
+        created_at=older,
+    )
+    _create_content(
+        session,
+        title="Sales Deck",
+        status=ContentStatus.published,
+        category=sales,
+        file_type="ppt",
+    )
 
     response = client.get("/content", params={"category_id": str(marketing.id)})
     assert response.status_code == 200
     body = response.json()
     assert body["total"] == 1
     assert body["items"][0]["title"] == "Marketing Playbook"
+    assert body["items"][0]["category_name"] == "Marketing"
 
     response = client.get("/content", params={"search": "sales"})
     assert response.status_code == 200
     body = response.json()
     assert body["total"] == 1
     assert body["items"][0]["title"] == "Sales Deck"
+
+    response = client.get("/content", params={"content_type": "ppt"})
+    assert response.status_code == 200
+    assert response.json()["total"] == 1
+
+    response = client.get(
+        "/content",
+        params={"uploaded_before": (datetime.now(tz=timezone.utc) - timedelta(days=5)).isoformat()},
+    )
+    assert response.status_code == 200
+    assert response.json()["total"] == 1
 
     app.dependency_overrides.pop(get_current_user, None)
 
@@ -151,7 +190,10 @@ def test_content_detail_and_download(client: TestClient, session):
 
     detail = client.get(f"/content/{content.id}")
     assert detail.status_code == 200
-    assert detail.json()["title"] == "Reference Guide"
+    detail_body = detail.json()
+    assert detail_body["title"] == "Reference Guide"
+    assert detail_body["liked_by_me"] is False
+    assert detail_body["category_name"] is None
 
     download = client.post(f"/content/{content.id}/download")
     assert download.status_code == 200
@@ -208,6 +250,24 @@ def test_like_and_unlike_content(client: TestClient, session):
         .all()
     )
     assert len(like_logs) == 2
+
+    app.dependency_overrides.pop(get_current_user, None)
+
+
+def test_list_categories(client: TestClient, session):
+    user = _create_user(session)
+    app.dependency_overrides[get_current_user] = lambda: session.get(User, user.id)
+
+    marketing = Category(name="Marketing")
+    sales = Category(name="Sales")
+    session.add_all([marketing, sales])
+    session.commit()
+
+    response = client.get("/content/categories")
+    assert response.status_code == 200
+    body = response.json()
+    names = {item["name"] for item in body["items"]}
+    assert names == {"Marketing", "Sales"}
 
     app.dependency_overrides.pop(get_current_user, None)
 

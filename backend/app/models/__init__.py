@@ -21,3 +21,4 @@ __all__ = [
     "User",
     "PasswordResetToken",
 ]
+from .user import UserStatus

@@ -12,7 +12,10 @@ function AppLayout() {
   const { user, isAuthenticated } = useAuth();
   const primaryLinks = [
     { to: "/", label: "Home" },
+    { to: "/content", label: "Content" },
     { to: "/profile", label: "My Profile" },
+    { to: "/admin/content", label: "Admin Content" },
+    { to: "/admin/audit", label: "Audit Logs" },
     ...(isAuthenticated
       ? [{ to: "/profile/settings", label: "Settings" }]
       : []),
