@@ -1,11 +1,9 @@
-
 from __future__ import annotations
 
 from typing import Optional
 from uuid import UUID
 
 import bleach
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..models.comment import Comment, CommentStatus

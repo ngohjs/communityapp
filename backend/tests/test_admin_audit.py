@@ -100,7 +100,7 @@ def test_admin_can_list_audit_logs_with_filters(client: TestClient, session):
     actor = _create_user(session, email="member@example.com", is_admin=False)
 
     now = datetime.now(timezone.utc)
-    older = _create_log(
+    _create_log(
         session,
         actor_id=actor.id,
         action_type="auth.register",
@@ -108,7 +108,7 @@ def test_admin_can_list_audit_logs_with_filters(client: TestClient, session):
         created_at=now - timedelta(days=2),
         metadata={"email": actor.email},
     )
-    newest = _create_log(
+    _create_log(
         session,
         actor_id=admin.id,
         action_type="content.create",

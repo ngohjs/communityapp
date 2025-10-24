@@ -259,7 +259,13 @@ def test_privacy_admin_requires_admin_user(client: TestClient, session):
     owner = _create_user(session, email="owner3@example.com")
     admin = _create_user(session, email="admin@example.com", is_admin=True)
     viewer = _create_user(session, email="viewer3@example.com")
-    session.add_all([UserProfile(user_id=owner.id), UserProfile(user_id=admin.id), UserProfile(user_id=viewer.id)])
+    session.add_all(
+        [
+            UserProfile(user_id=owner.id),
+            UserProfile(user_id=admin.id),
+            UserProfile(user_id=viewer.id),
+        ]
+    )
     session.commit()
 
     def override_owner(token: Optional[str] = None):
@@ -309,7 +315,9 @@ def test_update_notification_preferences(client: TestClient, session):
     assert prefs.notify_content is False
     assert prefs.notify_community is True
 
-    audit_entries = session.query(AuditLog).filter(AuditLog.action_type == "profile.preferences.update").all()
+    audit_entries = (
+        session.query(AuditLog).filter(AuditLog.action_type == "profile.preferences.update").all()
+    )
     assert len(audit_entries) == 1
 
     app.dependency_overrides.pop(get_current_user, None)

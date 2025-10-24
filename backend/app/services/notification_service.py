@@ -40,7 +40,9 @@ class NotificationProvider(Protocol):
 class LoggingNotificationProvider:
     """Default provider that logs notification payloads for development."""
 
-    def send(self, message: NotificationMessage) -> None:  # pragma: no cover - thin wrapper around logger
+    def send(
+        self, message: NotificationMessage
+    ) -> None:  # pragma: no cover - thin wrapper around logger
         logger.info(
             "Notification dispatched",
             extra={

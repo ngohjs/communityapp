@@ -108,7 +108,9 @@ class ContentService:
                 content.published_at = datetime.now(timezone.utc)
             if status == ContentStatus.draft:
                 content.published_at = None
-            publish_now = status == ContentStatus.published and original_status != ContentStatus.published
+            publish_now = (
+                status == ContentStatus.published and original_status != ContentStatus.published
+            )
             updates["status"] = status.value
 
         if updates:

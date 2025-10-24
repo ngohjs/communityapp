@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
-
 import backend.app.models  # noqa: F401 - ensure models are imported for metadata
 import pytest
 from fastapi.testclient import TestClient
@@ -13,7 +11,11 @@ from backend.app.database import Base, get_db
 from backend.app.main import app
 from backend.app.config import get_settings
 from backend.app.utils.rate_limiter import reset_auth_rate_limiter
-from backend.app.services.notification_service import NotificationMessage, NotificationProvider, set_notification_provider
+from backend.app.services.notification_service import (
+    NotificationMessage,
+    NotificationProvider,
+    set_notification_provider,
+)
 
 
 PASSWORD_RESET_LOGGER = "backend.app.services.notification_service"
@@ -185,7 +187,7 @@ def test_refresh_requires_cookie(client: TestClient):
 
 
 def _extract_reset_token(caplog) -> str:
-    for record in caplog.records:
+    for record in reversed(caplog.records):
         token = getattr(record, "token", None)
         if token:
             return token
@@ -222,9 +224,7 @@ def test_forgot_password_and_reset_flow(client: TestClient, caplog):
     assert old_login.status_code == 401
 
     # New password succeeds
-    new_login = client.post(
-        "/auth/login", json={"email": email, "password": new_password}
-    )
+    new_login = client.post("/auth/login", json={"email": email, "password": new_password})
     assert new_login.status_code == 200
     assert new_login.json()["user"]["email"] == email
 
@@ -267,6 +267,8 @@ def test_login_rate_limit_exceeded(client: TestClient):
     )
     assert blocked.status_code == 429
     assert blocked.json()["detail"].startswith("Too many requests")
+
+
 class RecordingProvider(NotificationProvider):
     def __init__(self) -> None:
         self.messages: list[NotificationMessage] = []

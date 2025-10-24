@@ -213,7 +213,9 @@ class AuthService:
         settings = get_settings()
         new_refresh_token = create_refresh_token(str(user.id), session_id=str(session.id))
         session.refresh_token_hash = hash_token(new_refresh_token)
-        session.expires_at = datetime.now(timezone.utc) + timedelta(days=settings.refresh_token_expiry_days)
+        session.expires_at = datetime.now(timezone.utc) + timedelta(
+            days=settings.refresh_token_expiry_days
+        )
 
         log_action(
             db,

@@ -123,7 +123,9 @@ def login(
     except ValueError as exc:
         message = str(exc)
         if message == "invalid_credentials":
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials"
+            )
         if message == "user_not_active":
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account not active")
         raise
@@ -155,7 +157,9 @@ def refresh(response: Response, request: Request, db: Session = Depends(get_db))
     settings = get_settings()
     refresh_token = request.cookies.get(settings.refresh_token_cookie_name)
     if not refresh_token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing refresh token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing refresh token"
+        )
 
     try:
         user, access_token, new_refresh_token, session = AuthService.refresh(
@@ -165,7 +169,9 @@ def refresh(response: Response, request: Request, db: Session = Depends(get_db))
         message = str(exc)
         if message in {"invalid_token", "session_not_found", "session_expired"}:
             _clear_refresh_cookie(response)
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token"
+            )
         if message == "user_not_active":
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account not active")
         if message == "user_not_found":
@@ -217,7 +223,9 @@ def logout(response: Response, request: Request, db: Session = Depends(get_db)) 
     return None
 
 
-@router.post("/forgot-password", response_model=MessageResponse, status_code=status.HTTP_202_ACCEPTED)
+@router.post(
+    "/forgot-password", response_model=MessageResponse, status_code=status.HTTP_202_ACCEPTED
+)
 def forgot_password(
     payload: ForgotPasswordRequest,
     request: Request,
@@ -231,7 +239,9 @@ def forgot_password(
         ip_address=ip_address,
         user_agent=user_agent,
     )
-    return MessageResponse(message="If an account exists for that email, a reset link has been sent.")
+    return MessageResponse(
+        message="If an account exists for that email, a reset link has been sent."
+    )
 
 
 @router.post("/reset-password", response_model=MessageResponse)
@@ -244,7 +254,9 @@ def reset_password(
     except ValueError as exc:
         message = str(exc)
         if message in {"invalid_token", "token_not_found", "token_used", "token_expired"}:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired token")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired token"
+            )
         if message == "user_not_found":
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
         raise
