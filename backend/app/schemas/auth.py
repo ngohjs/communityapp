@@ -28,6 +28,7 @@ class VerifyEmailResponse(BaseModel):
     email: EmailStr
     status: str
     verified: bool
+    activated: bool
 
 
 class UserSummary(BaseModel):

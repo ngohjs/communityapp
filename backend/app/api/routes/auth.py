@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from ...database import get_db
 from ...config import get_settings
+from ...models.user import UserStatus
 from ...schemas.auth import (
     ForgotPasswordRequest,
     LoginRequest,
@@ -66,11 +67,14 @@ def verify_email(token: str, db: Session = Depends(get_db)) -> VerifyEmailRespon
             raise HTTPException(status_code=404, detail="User not found")
         raise
 
+    is_verified = user.status == UserStatus.active.value
+
     return VerifyEmailResponse(
         id=str(user.id),
         email=user.email,
         status=user.status,
-        verified=activated,
+        verified=is_verified,
+        activated=activated,
     )
 
 
