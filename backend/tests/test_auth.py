@@ -80,12 +80,15 @@ def test_register_and_verify_flow(client: TestClient, notification_recorder: Rec
     verify_body = verify_response.json()
     assert verify_body["status"] == "active"
     assert verify_body["verified"] is True
+    assert verify_body["activated"] is True
     assert len(notification_recorder.messages) == 2
     assert notification_recorder.messages[1].template == "auth.account_verified"
 
     second_verify = client.get("/auth/verify", params={"token": token})
     assert second_verify.status_code == 200
-    assert second_verify.json()["verified"] is False
+    second_body = second_verify.json()
+    assert second_body["verified"] is True
+    assert second_body["activated"] is False
     assert len(notification_recorder.messages) == 2
 
 

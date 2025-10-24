@@ -69,11 +69,56 @@ def seed_super_admin(session) -> None:
     )
 
 
+def seed_member_account(session) -> None:
+    settings = get_settings()
+
+    if not settings.seed_member_email:
+        return
+
+    existing = session.execute(
+        select(User).where(User.email == settings.seed_member_email)
+    ).scalar_one_or_none()
+    if existing:
+        return
+
+    password_hash = bcrypt.hashpw(
+        settings.seed_member_password.encode("utf-8"), bcrypt.gensalt()
+    ).decode("utf-8")
+
+    member = User(
+        email=settings.seed_member_email,
+        first_name=settings.seed_member_first_name,
+        last_name=settings.seed_member_last_name,
+        password_hash=password_hash,
+        status=UserStatus.active.value,
+        is_admin=False,
+    )
+    session.add(member)
+    session.flush()
+
+    session.add(
+        UserProfile(
+            user_id=member.id,
+            bio="Seeded QA member account.",
+        )
+    )
+    session.add(
+        UserPreference(
+            user_id=member.id,
+            privacy_level=PrivacyLevel.private.value,
+            notify_account=True,
+            notify_content=True,
+            notify_community=True,
+        )
+    )
+
+
 def main() -> None:
     load_dotenv()
     with session_scope() as session:
         seed_categories(session)
         seed_super_admin(session)
+        seed_member_account(session)
     print("Development seed completed.")
 
 

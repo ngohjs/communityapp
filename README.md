@@ -82,10 +82,16 @@ GitHub Actions workflow (`.github/workflows/ci.yml`) runs the same lint + test m
 | `LOG_LEVEL` | env / compose | Logging verbosity (`INFO`, `DEBUG`, etc.) |
 | `VITE_API_BASE_URL` | `frontend` build args | API base URL used by the frontend |
 
-See `backend/.env.example` for all backend defaults. Seed credentials:
+### Test accounts
 
-- Email: `admin@example.com`
-- Password: `ChangeMe123!`
+Running `make seed` (or the docker compose stack) will provision two logins by default:
+
+| Role | Email | Password |
+| ---- | ----- | -------- |
+| Admin | `admin@example.com` | `ChangeMe123!` |
+| QA Member | `member.qa@example.com` | `MemberPass123!` |
+
+You can tweak these in `backend/.env` via the `SEED_ADMIN_*` and `SEED_MEMBER_*` variables before seeding.
 
 ## Observability
 

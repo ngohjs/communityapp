@@ -9,6 +9,7 @@ type VerifyResponse = {
   email: string;
   status: string;
   verified: boolean;
+  activated: boolean;
 };
 
 function VerifyEmailPage() {
@@ -91,6 +92,10 @@ function VerifyEmailPage() {
             </li>
             <li>
               <strong>Verified:</strong> {mutation.data.verified ? "Yes" : "No"}
+            </li>
+            <li>
+              <strong>Activation result:</strong>{" "}
+              {mutation.data.activated ? "Account activated during this request" : "Already verified"}
             </li>
           </ul>
         </div>

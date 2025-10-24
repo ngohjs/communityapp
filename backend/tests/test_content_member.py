@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from typing import Optional
 from uuid import UUID
 
@@ -88,11 +89,17 @@ def _create_content(
     file_type: str = "pdf",
     created_at: Optional[datetime] = None,
 ):
+    settings = get_settings()
+    relative_path = f"content/{title}.pdf"
+    content_dir = Path(settings.media_root) / "content"
+    content_dir.mkdir(parents=True, exist_ok=True)
+    (content_dir / f"{title}.pdf").write_bytes(b"%PDF-1.4\nTest file")
+
     content = ContentItem(
         title=title,
         description=f"Description for {title}",
         status=status.value,
-        file_path=f"content/{title}.pdf",
+        file_path=relative_path,
         file_type=file_type,
         category_id=category.id if category else None,
     )
@@ -208,6 +215,14 @@ def test_content_detail_and_download(client: TestClient, session):
         session.query(AuditLog).filter(AuditLog.action_type == "content.download.request").all()
     )
     assert len(audit_entries) == 1
+
+    file_response = client.get(
+        f"/content/{content.id}/download",
+        params={"token": token},
+    )
+    assert file_response.status_code == 200
+    assert file_response.headers["content-type"] == "application/pdf"
+    assert file_response.content.startswith(b"%PDF")
 
     app.dependency_overrides.pop(get_current_user, None)
 
