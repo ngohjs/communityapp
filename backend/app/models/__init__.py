@@ -20,5 +20,6 @@ __all__ = [
     "UserSession",
     "User",
     "PasswordResetToken",
+    "UserStatus",
 ]
 from .user import UserStatus

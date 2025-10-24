@@ -41,7 +41,9 @@ def _serialize_profile(user: User) -> ProfileResponse:
     if isinstance(interests, list):
         interests_list = interests
     elif isinstance(interests, dict):
-        interests_list = interests.get("items") if isinstance(interests.get("items"), list) else None
+        interests_list = (
+            interests.get("items") if isinstance(interests.get("items"), list) else None
+        )
     else:
         interests_list = None
 
@@ -81,7 +83,7 @@ def update_my_profile(
 ) -> ProfileUpdateResponse:
     interests = payload.interests
     try:
-        profile = ProfileService.update_profile(
+        ProfileService.update_profile(
             db,
             user=current_user,
             first_name=payload.first_name,
@@ -113,7 +115,9 @@ async def upload_avatar(
 
     contents = await file.read()
     if len(contents) > 5 * 1024 * 1024:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File exceeds 5MB limit")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="File exceeds 5MB limit"
+        )
 
     extension = "png" if file.content_type == "image/png" else "jpg"
 
@@ -143,9 +147,11 @@ def update_privacy(
     try:
         privacy_level = PrivacyLevel(payload.privacy_level)
     except ValueError as exc:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Invalid privacy level") from exc
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Invalid privacy level"
+        ) from exc
 
-    preferences = ProfileService.update_privacy(
+    ProfileService.update_privacy(
         db,
         user=current_user,
         privacy_level=privacy_level,
@@ -163,7 +169,7 @@ def update_preferences(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> PreferencesUpdateResponse:
-    preferences = ProfileService.update_notification_preferences(
+    ProfileService.update_notification_preferences(
         db,
         user=current_user,
         notify_content=payload.notify_content,

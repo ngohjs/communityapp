@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from pathlib import Path
@@ -19,7 +18,11 @@ from backend.app.models.category import Category
 from backend.app.models.content import ContentItem, ContentStatus
 from backend.app.models.preference import PrivacyLevel, UserPreference
 from backend.app.models.user import User, UserStatus
-from backend.app.services.notification_service import NotificationMessage, NotificationProvider, set_notification_provider
+from backend.app.services.notification_service import (
+    NotificationMessage,
+    NotificationProvider,
+    set_notification_provider,
+)
 
 
 engine = create_engine(
@@ -195,7 +198,9 @@ def test_update_content_metadata(client: TestClient, session):
     app.dependency_overrides.pop(get_current_admin, None)
 
 
-def test_update_content_publish_triggers_notifications(client: TestClient, session, notification_recorder):
+def test_update_content_publish_triggers_notifications(
+    client: TestClient, session, notification_recorder
+):
     admin = _create_user(session)
     member = _create_user(session, email="notify@example.com", is_admin=False)
     pref = UserPreference(
@@ -264,6 +269,8 @@ def test_create_content_invalid_type(client: TestClient, session):
     app.dependency_overrides.pop(get_current_admin, None)
 
     app.dependency_overrides.pop(get_current_admin, None)
+
+
 class RecordingProvider(NotificationProvider):
     def __init__(self) -> None:
         self.messages: list[NotificationMessage] = []

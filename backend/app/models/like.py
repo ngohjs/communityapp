@@ -14,9 +14,7 @@ class Like(Base):
     __tablename__ = "likes"
     __table_args__ = (UniqueConstraint("content_id", "user_id", name="uq_likes_content_user"),)
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     content_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("content_items.id", ondelete="CASCADE"),

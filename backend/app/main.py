@@ -8,8 +8,11 @@ from .api.routes import content as content_routes
 from .api.routes import profile as profile_routes
 from .middleware.rate_limit import AuthRateLimitMiddleware
 from .database import remove_session
+from .logging_config import configure_logging
+from .telemetry import collect_runtime_metrics
 
 settings = get_settings()
+configure_logging(settings.log_level)
 
 app = FastAPI(
     title=settings.app_name,
@@ -34,13 +37,21 @@ app.include_router(profile_routes.router)
 app.include_router(content_routes.router)
 app.include_router(admin_routes.router)
 
+
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the Community App API"}
 
+
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+
+@app.get("/metrics")
+def metrics():
+    """Placeholder metrics endpoint for future observability integrations."""
+    return {"status": "ok", "details": collect_runtime_metrics()}
 
 
 @app.on_event("shutdown")
@@ -48,6 +59,8 @@ def shutdown_event() -> None:
     """Ensure scoped sessions are cleaned up when application stops."""
     remove_session()
 
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

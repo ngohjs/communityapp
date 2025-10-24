@@ -28,7 +28,9 @@ class InMemoryRateLimiter:
                 queue.popleft()
 
             if len(queue) >= self.limit:
-                retry_after = self.window_seconds - (now - queue[0]) if queue else self.window_seconds
+                retry_after = (
+                    self.window_seconds - (now - queue[0]) if queue else self.window_seconds
+                )
                 return max(retry_after, 1.0)
 
             queue.append(now)

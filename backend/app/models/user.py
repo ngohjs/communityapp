@@ -21,15 +21,15 @@ class UserStatus(str, Enum):
 class User(Base):
     __tablename__ = "users"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     phone: Mapped[Optional[str]] = mapped_column(String(32), unique=True)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     first_name: Mapped[str] = mapped_column(String(100), nullable=False)
     last_name: Mapped[str] = mapped_column(String(100), nullable=False)
-    status: Mapped[str] = mapped_column(String(32), nullable=False, default=UserStatus.pending.value, index=True)
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=UserStatus.pending.value, index=True
+    )
     is_admin: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
@@ -39,8 +39,12 @@ class User(Base):
     )
 
     profile = relationship("UserProfile", back_populates="user", uselist=False, lazy="joined")
-    preferences = relationship("UserPreference", back_populates="user", uselist=False, lazy="joined")
-    content_items = relationship("ContentItem", back_populates="owner", cascade="all, delete-orphan")
+    preferences = relationship(
+        "UserPreference", back_populates="user", uselist=False, lazy="joined"
+    )
+    content_items = relationship(
+        "ContentItem", back_populates="owner", cascade="all, delete-orphan"
+    )
     comments = relationship("Comment", back_populates="author")
     likes = relationship("Like", back_populates="user", cascade="all, delete-orphan")
     sessions = relationship("UserSession", back_populates="user", cascade="all, delete-orphan")

@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     version: str = "0.1.0"
     environment: str = Field(default="development", description="Current runtime environment")
     debug: bool = Field(default=True, description="Enable FastAPI debug mode")
+    log_level: str = Field(default="INFO", description="Application log level")
 
     database_url: str = Field(
         default="postgresql+psycopg2://postgres:postgres@localhost:5432/community_app",

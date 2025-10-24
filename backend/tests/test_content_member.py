@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
@@ -205,7 +204,9 @@ def test_content_detail_and_download(client: TestClient, session):
     assert decoded["actor"] == str(user.id)
     assert decoded["type"] == "download"
 
-    audit_entries = session.query(AuditLog).filter(AuditLog.action_type == "content.download.request").all()
+    audit_entries = (
+        session.query(AuditLog).filter(AuditLog.action_type == "content.download.request").all()
+    )
     assert len(audit_entries) == 1
 
     app.dependency_overrides.pop(get_current_user, None)

@@ -44,17 +44,23 @@ async def create_content(
 ) -> AdminContentResponse:
     title = title.strip()
     if not title:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Title is required")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Title is required"
+        )
 
     try:
         status_enum = ContentStatus(status_value)
     except ValueError as exc:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid status") from exc
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid status"
+        ) from exc
 
     try:
         category_uuid = UUID(category_id) if category_id else None
     except ValueError as exc:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid category id") from exc
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid category id"
+        ) from exc
     file_bytes = await file.read()
 
     try:
@@ -71,11 +77,17 @@ async def create_content(
     except ValueError as exc:
         message = str(exc)
         if message == "unsupported_file_type":
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported file type") from exc
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported file type"
+            ) from exc
         if message == "file_too_large":
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File exceeds 200MB limit") from exc
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="File exceeds 200MB limit"
+            ) from exc
         if message == "category_not_found":
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Category not found") from exc
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
+            ) from exc
         raise
 
     return AdminContentResponse.model_validate(content)
@@ -107,7 +119,9 @@ def update_content(
     except ValueError as exc:
         message = str(exc)
         if message == "category_not_found":
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Category not found") from exc
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
+            ) from exc
         raise
 
     return ContentUpdateResponse.model_validate(updated)
@@ -154,14 +168,16 @@ def get_audit_logs(
             target_id=log.target_id,
             metadata=log.metadata_json,
             created_at=log.created_at,
-            actor=AuditLogActor(
-                id=str(log.actor.id) if log.actor else None,
-                email=log.actor.email if log.actor else None,
-                first_name=log.actor.first_name if log.actor else None,
-                last_name=log.actor.last_name if log.actor else None,
-            )
-            if log.actor
-            else None,
+            actor=(
+                AuditLogActor(
+                    id=str(log.actor.id) if log.actor else None,
+                    email=log.actor.email if log.actor else None,
+                    first_name=log.actor.first_name if log.actor else None,
+                    last_name=log.actor.last_name if log.actor else None,
+                )
+                if log.actor
+                else None
+            ),
         )
         for log in logs
     ]

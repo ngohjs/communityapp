@@ -165,7 +165,9 @@ def get_content_detail(
     category_name = content.category.name if content.category else None
     owner_name = None
     if content.owner:
-        owner_name = " ".join(filter(None, [content.owner.first_name, content.owner.last_name])).strip()
+        owner_name = " ".join(
+            filter(None, [content.owner.first_name, content.owner.last_name])
+        ).strip()
         if not owner_name:
             owner_name = content.owner.email
 
@@ -212,7 +214,9 @@ def generate_download(
     return ContentDownloadResponse(token=token)
 
 
-@router.post("/{content_id}/likes", response_model=LikeResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/{content_id}/likes", response_model=LikeResponse, status_code=status.HTTP_201_CREATED
+)
 def like_content(
     content_id: UUID,
     db: Session = Depends(get_db),
@@ -280,7 +284,9 @@ def list_comments(
     return CommentListResponse(items=[CommentResponse.model_validate(c) for c in comments])
 
 
-@router.post("/{content_id}/comments", response_model=CommentResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/{content_id}/comments", response_model=CommentResponse, status_code=status.HTTP_201_CREATED
+)
 def create_comment_endpoint(
     content_id: UUID,
     payload: CommentCreateRequest,

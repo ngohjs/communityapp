@@ -46,9 +46,7 @@ def list_logs(
     page_size = max(1, min(page_size, 100))
 
     query = (
-        select(AuditLog)
-        .options(selectinload(AuditLog.actor))
-        .order_by(AuditLog.created_at.desc())
+        select(AuditLog).options(selectinload(AuditLog.actor)).order_by(AuditLog.created_at.desc())
     )
     count_query = select(func.count(AuditLog.id))
 
@@ -64,10 +62,6 @@ def list_logs(
 
     total = db.execute(count_query).scalar_one()
 
-    logs = (
-        db.execute(query.offset((page - 1) * page_size).limit(page_size))
-        .scalars()
-        .all()
-    )
+    logs = db.execute(query.offset((page - 1) * page_size).limit(page_size)).scalars().all()
 
     return logs, total

@@ -73,7 +73,9 @@ def test_logging_notification_provider_logs_payload(caplog):
         provider.send(message)
 
     assert any(record.message == "Notification dispatched" for record in caplog.records)
-    record = next(record for record in caplog.records if record.message == "Notification dispatched")
+    record = next(
+        record for record in caplog.records if record.message == "Notification dispatched"
+    )
     assert record.channel == message.channel.value
     assert record.recipient == message.recipient
     assert record.template == message.template

@@ -21,9 +21,7 @@ class ContentStatus(str, Enum):
 class ContentItem(Base):
     __tablename__ = "content_items"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     file_path: Mapped[str] = mapped_column(String(512), nullable=False)
@@ -35,7 +33,9 @@ class ContentItem(Base):
     owner_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
-    status: Mapped[str] = mapped_column(String(32), nullable=False, default=ContentStatus.draft.value)
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=ContentStatus.draft.value
+    )
     published_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()

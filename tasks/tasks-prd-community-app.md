@@ -172,8 +172,8 @@
   - [x] 8.3 Build admin dashboard for content upload/edit/archive, including file validation and progress feedback.
   - [x] 8.4 Implement admin audit log viewer with filter controls and pagination.
 
-- [ ] 9.0 DevOps, Quality & Rollout Support
-  - [ ] 9.1 Update Dockerfiles/docker-compose to support new build pipelines and persistent storage mounts.
-  - [ ] 9.2 Configure linting/formatting (Ruff, Black, ESLint, Prettier) and add CI scripts or instructions.
-  - [ ] 9.3 Document environment setup, `.env` variables, seed scripts, and deployment steps in README/docs.
-  - [ ] 9.4 Add health check endpoint/tests, structured logging config, and placeholders for monitoring/metrics.
+- [x] 9.0 DevOps, Quality & Rollout Support
+  - [x] 9.1 Update Dockerfiles/docker-compose to support new build pipelines and persistent storage mounts.
+  - [x] 9.2 Configure linting/formatting (Ruff, Black, ESLint, Prettier) and add CI scripts or instructions.
+  - [x] 9.3 Document environment setup, `.env` variables, seed scripts, and deployment steps in README/docs.
+  - [x] 9.4 Add health check endpoint/tests, structured logging config, and placeholders for monitoring/metrics.
