@@ -173,7 +173,15 @@
   - [x] 8.4 Implement admin audit log viewer with filter controls and pagination.
 
 - [x] 9.0 DevOps, Quality & Rollout Support
-  - [x] 9.1 Update Dockerfiles/docker-compose to support new build pipelines and persistent storage mounts.
-  - [x] 9.2 Configure linting/formatting (Ruff, Black, ESLint, Prettier) and add CI scripts or instructions.
-  - [x] 9.3 Document environment setup, `.env` variables, seed scripts, and deployment steps in README/docs.
-  - [x] 9.4 Add health check endpoint/tests, structured logging config, and placeholders for monitoring/metrics.
+- [x] 9.1 Update Dockerfiles/docker-compose to support new build pipelines and persistent storage mounts.
+- [x] 9.2 Configure linting/formatting (Ruff, Black, ESLint, Prettier) and add CI scripts or instructions.
+- [x] 9.3 Document environment setup, `.env` variables, seed scripts, and deployment steps in README/docs.
+- [x] 9.4 Add health check endpoint/tests, structured logging config, and placeholders for monitoring/metrics.
+
+- [ ] 10.0 Terra Trust Design System Elevation *(see `docs/design/terra-trust-system-blueprint.md`)*
+  - [ ] 10.1 Token Expansion — deliver primitive and semantic token sets (color, type, space, elevation, motion, density, dark mode) and wire them through CSS variables + Tailwind theme.
+  - [ ] 10.2 Component Library — implement button, form controls, feedback, navigation, layout primitives with full state matrices and Storybook documentation.
+  - [ ] 10.3 Motion & Feedback — codify duration/easing tokens, keyframe library, reduced motion handling, and apply choreography to overlays, nav, KPI, and notifications.
+  - [ ] 10.4 Accessibility & Quality — focus strategy, skip links, aria instrumentation, automated axe checks, contrast audits with tokenized pairings.
+  - [ ] 10.5 Cross-Platform & Performance — responsive/density guidance, mobile navigation patterns, font loading improvements, CSS delivery plan, component performance profiling.
+  - [ ] 10.6 Portfolio Presentation — produce documentation site/motion reels and capture case study assets for award submissions.
