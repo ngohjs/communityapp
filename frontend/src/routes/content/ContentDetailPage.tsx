@@ -127,11 +127,11 @@ export default function ContentDetailPage() {
 
   return (
     <section className="flex flex-col gap-8">
-      <Link to="/content" className={terraButtonClass("ghost") + " w-fit px-6"}>
+      <Link to="/content" className={terraButtonClass({ variant: "ghost" }) + " w-fit px-6"}>
         ← Back to library
       </Link>
 
-      <TerraCard title={detail.title} eyebrow={<span className="terra-badge">{categoryName}</span>}>
+      <TerraCard title={detail.title} eyebrow={<TerraBadge tone="neutral">{categoryName}</TerraBadge>}>
         <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
           <div className="space-y-4">
             <p className="text-body-lg text-ink-700">{detail.description ?? "No description provided."}</p>
@@ -161,22 +161,20 @@ export default function ContentDetailPage() {
             </dl>
           </div>
           <div className="flex flex-col gap-3">
-            <button
-              type="button"
+            <TerraButton
+              variant="ghost"
               onClick={handleLikeToggle}
               disabled={likeMutation.isPending || unlikeMutation.isPending}
-              className={terraButtonClass("ghost")}
             >
               {detail.liked_by_me ? "Unlike" : "Like"} ({detail.likes_count})
-            </button>
-            <button
-              type="button"
+            </TerraButton>
+            <TerraButton
+              variant="primary"
               onClick={handleDownload}
               disabled={downloadMutation.isPending}
-              className={terraButtonClass("primary")}
             >
               {downloadMutation.isPending ? "Preparing download…" : "Download"}
-            </button>
+            </TerraButton>
           </div>
         </div>
       </TerraCard>
@@ -184,23 +182,22 @@ export default function ContentDetailPage() {
       <TerraLedgerSection title={`Comments (${detail.comments_count})`} description="Newest at bottom">
         <form onSubmit={handleCreateComment} className="flex flex-col gap-3">
           <TerraField label="Add a comment" htmlFor="new-comment">
-            <textarea
+            <TerraTextarea
               id="new-comment"
               value={newComment}
               onChange={(event) => setNewComment(event.target.value)}
               placeholder="Share your thoughts or tips…"
-              className="terra-textarea min-h-[100px]"
+              className="min-h-[100px]"
               maxLength={1000}
             />
           </TerraField>
           <div className="flex justify-end gap-3 text-sm">
-            <button
+            <TerraButton
               type="submit"
               disabled={createCommentMutation.isPending || !newComment.trim()}
-              className={terraButtonClass("primary")}
             >
               {createCommentMutation.isPending ? "Posting…" : "Post comment"}
-            </button>
+            </TerraButton>
           </div>
         </form>
 
@@ -215,23 +212,24 @@ export default function ContentDetailPage() {
                 <TerraCard key={comment.id} title={`Posted ${formatDate(comment.created_at)}`}>
                   {isEditing ? (
                     <form onSubmit={handleUpdateComment} className="flex flex-col gap-3">
-                      <textarea
+                      <TerraTextarea
                         value={editingCommentBody}
                         onChange={(event) => setEditingCommentBody(event.target.value)}
-                        className="terra-textarea min-h-[90px]"
+                        className="min-h-[90px]"
                         maxLength={1000}
                       />
                       <div className="flex gap-2">
-                        <button type="submit" className={terraButtonClass("primary") + " text-xs px-4 py-2"}>
+                        <TerraButton type="submit" size="sm">
                           Save
-                        </button>
-                        <button
+                        </TerraButton>
+                        <TerraButton
                           type="button"
+                          variant="ghost"
+                          size="sm"
                           onClick={() => startEditingComment("", "")}
-                          className={terraButtonClass("ghost") + " text-xs px-4 py-2"}
                         >
                           Cancel
-                        </button>
+                        </TerraButton>
                       </div>
                     </form>
                   ) : (
@@ -240,20 +238,22 @@ export default function ContentDetailPage() {
 
                   {isAuthor ? (
                     <div className="mt-4 flex gap-3">
-                      <button
+                      <TerraButton
                         type="button"
+                        variant="ghost"
+                        size="sm"
                         onClick={() => startEditingComment(comment.id, comment.body)}
-                        className={terraButtonClass("ghost") + " text-xs px-4 py-2"}
                       >
                         Edit
-                      </button>
-                      <button
+                      </TerraButton>
+                      <TerraButton
                         type="button"
+                        variant="destructive"
+                        size="sm"
                         onClick={() => handleDeleteComment(comment.id)}
-                        className={terraButtonClass("primary") + " text-xs px-4 py-2"}
                       >
                         Delete
-                      </button>
+                      </TerraButton>
                     </div>
                   ) : null}
                 </TerraCard>
