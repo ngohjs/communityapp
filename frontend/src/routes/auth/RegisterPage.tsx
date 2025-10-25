@@ -2,7 +2,7 @@ import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
-import { TerraAlert, TerraCard, TerraField, terraButtonClass } from "@/components/ui/terra";
+import { TerraAlert, TerraBadge, TerraButton, TerraCard, TerraField, TerraInput } from "@/components/ui/terra";
 import { apiClient, toApiError } from "@/lib/api/client";
 
 type RegisterPayload = {
@@ -57,7 +57,7 @@ function RegisterPage() {
   return (
     <TerraCard
       title="Create an account"
-      eyebrow={<span className="terra-badge">New member</span>}
+      eyebrow={<TerraBadge tone="success">New member</TerraBadge>}
       action={
         <span className="text-body-sm text-ink-500">
           Already have an account? <Link to="/auth/login" className="text-accent-verdant underline-offset-4">Sign in</Link>
@@ -66,44 +66,45 @@ function RegisterPage() {
       className="max-w-3xl"
     >
       <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2 md:gap-6">
-        <TerraField label="First name">
-          <input
+        <TerraField label="First name" htmlFor="first_name" required>
+          <TerraInput
+            id="first_name"
             type="text"
             name="first_name"
             value={values.first_name}
             onChange={(event) => setValues((prev) => ({ ...prev, first_name: event.target.value }))}
             required
             autoComplete="given-name"
-            className="terra-input"
           />
         </TerraField>
 
-        <TerraField label="Last name">
-          <input
+        <TerraField label="Last name" htmlFor="last_name" required>
+          <TerraInput
+            id="last_name"
             type="text"
             name="last_name"
             value={values.last_name}
             onChange={(event) => setValues((prev) => ({ ...prev, last_name: event.target.value }))}
             required
             autoComplete="family-name"
-            className="terra-input"
           />
         </TerraField>
 
-        <TerraField label="Email address" className="md:col-span-2">
-          <input
+        <TerraField label="Email address" htmlFor="email" supportingText="We’ll send verification instructions here" className="md:col-span-2">
+          <TerraInput
+            id="email"
             type="email"
             name="email"
             value={values.email}
             onChange={(event) => setValues((prev) => ({ ...prev, email: event.target.value }))}
             required
             autoComplete="email"
-            className="terra-input"
           />
         </TerraField>
 
-        <TerraField label="Password">
-          <input
+        <TerraField label="Password" htmlFor="password" supportingText="Minimum 8 characters" required>
+          <TerraInput
+            id="password"
             type="password"
             name="password"
             value={values.password}
@@ -111,12 +112,18 @@ function RegisterPage() {
             required
             autoComplete="new-password"
             minLength={8}
-            className="terra-input"
           />
         </TerraField>
 
-        <TerraField label="Confirm password">
-          <input
+        <TerraField
+          label="Confirm password"
+          htmlFor="confirm_password"
+          status={validationError ? "error" : "default"}
+          validationText={validationError ?? undefined}
+          required
+        >
+          <TerraInput
+            id="confirm_password"
             type="password"
             name="confirm_password"
             value={confirmPassword}
@@ -124,14 +131,13 @@ function RegisterPage() {
             required
             autoComplete="new-password"
             minLength={8}
-            className="terra-input"
           />
         </TerraField>
 
         <div className="md:col-span-2 flex justify-end">
-          <button type="submit" disabled={mutation.isPending} className={terraButtonClass("primary")}>
-            {mutation.isPending ? "Creating account…" : "Create account"}
-          </button>
+          <TerraButton type="submit" isLoading={mutation.isPending} loadingText="Creating account…">
+            Create account
+          </TerraButton>
         </div>
       </form>
 
@@ -142,7 +148,7 @@ function RegisterPage() {
       ) : null}
 
       {mutation.data ? (
-        <TerraAlert tone="info" title="Account created">
+        <TerraAlert tone="success" title="Account created">
           Account created for {mutation.data.email}. Status: {mutation.data.status}.<br />
           Use the verification token below to confirm the account. In production this would be emailed via the notifications service.
           <code className="mt-3 block rounded-md bg-[rgba(46,59,69,0.1)] px-4 py-3 text-xs text-ink-700">

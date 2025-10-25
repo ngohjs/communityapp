@@ -2,7 +2,7 @@ import { FormEvent, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 
-import { TerraAlert, TerraCard, TerraField, terraButtonClass } from "@/components/ui/terra";
+import { TerraAlert, TerraBadge, TerraButton, TerraCard, TerraField, TerraInput } from "@/components/ui/terra";
 import { apiClient, toApiError } from "@/lib/api/client";
 
 type ResetPasswordPayload = {
@@ -46,7 +46,7 @@ function ResetPasswordPage() {
   return (
     <TerraCard
       title="Reset password"
-      eyebrow={<span className="terra-badge">Security</span>}
+      eyebrow={<TerraBadge tone="info">Security</TerraBadge>}
       action={<span className="text-body-sm text-ink-500">Tokens expire after 30 minutes</span>}
       className="max-w-3xl"
     >
@@ -55,19 +55,20 @@ function ResetPasswordPage() {
       </p>
 
       <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2 md:gap-6">
-        <TerraField label="Reset token" className="md:col-span-2">
-          <input
+        <TerraField label="Reset token" htmlFor="token" className="md:col-span-2" required>
+          <TerraInput
+            id="token"
             type="text"
             name="token"
             value={token}
             onChange={(event) => setToken(event.target.value)}
             required
-            className="terra-input"
           />
         </TerraField>
 
-        <TerraField label="New password">
-          <input
+        <TerraField label="New password" htmlFor="password" supportingText="Minimum 8 characters" required>
+          <TerraInput
+            id="password"
             type="password"
             name="password"
             value={password}
@@ -75,12 +76,18 @@ function ResetPasswordPage() {
             required
             minLength={8}
             autoComplete="new-password"
-            className="terra-input"
           />
         </TerraField>
 
-        <TerraField label="Confirm password">
-          <input
+        <TerraField
+          label="Confirm password"
+          htmlFor="confirm_password"
+          status={validationError ? "error" : "default"}
+          validationText={validationError ?? undefined}
+          required
+        >
+          <TerraInput
+            id="confirm_password"
             type="password"
             name="confirm_password"
             value={confirmPassword}
@@ -88,14 +95,13 @@ function ResetPasswordPage() {
             required
             minLength={8}
             autoComplete="new-password"
-            className="terra-input"
           />
         </TerraField>
 
         <div className="md:col-span-2 flex justify-end">
-          <button type="submit" disabled={mutation.isPending} className={terraButtonClass("primary")}>
-            {mutation.isPending ? "Resetting password…" : "Reset password"}
-          </button>
+          <TerraButton type="submit" isLoading={mutation.isPending} loadingText="Resetting password…">
+            Reset password
+          </TerraButton>
         </div>
       </form>
 
@@ -106,7 +112,7 @@ function ResetPasswordPage() {
       ) : null}
 
       {mutation.data ? (
-        <TerraAlert tone="info" title="Password updated">
+        <TerraAlert tone="success" title="Password updated">
           {mutation.data.message}
           <br />
           You can now sign in with your new password. Any outstanding reset tokens have been invalidated.

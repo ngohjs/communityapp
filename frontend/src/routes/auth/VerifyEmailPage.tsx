@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 
-import { TerraAlert, TerraCard, TerraField, terraButtonClass } from "@/components/ui/terra";
+import { TerraAlert, TerraBadge, TerraButton, TerraCard, TerraField, TerraInput } from "@/components/ui/terra";
 import { apiClient, toApiError } from "@/lib/api/client";
 
 type VerifyResponse = {
@@ -45,25 +45,25 @@ function VerifyEmailPage() {
   return (
     <TerraCard
       title="Verify your email"
-      eyebrow={<span className="terra-badge">Account security</span>}
+      eyebrow={<TerraBadge tone="success">Account security</TerraBadge>}
       action={<span className="text-body-sm text-ink-500">Tokens typically delivered via the notification stub</span>}
       className="max-w-2xl"
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <TerraField label="Verification token">
-          <input
+        <TerraField label="Verification token" htmlFor="token" required>
+          <TerraInput
+            id="token"
             type="text"
             name="token"
             value={token}
             onChange={(event) => setToken(event.target.value)}
             required
-            className="terra-input"
           />
         </TerraField>
         <div className="flex justify-end">
-          <button type="submit" disabled={mutation.isPending} className={terraButtonClass("primary")}>
-            {mutation.isPending ? "Verifying…" : "Verify email"}
-          </button>
+          <TerraButton type="submit" isLoading={mutation.isPending} loadingText="Verifying…">
+            Verify email
+          </TerraButton>
         </div>
       </form>
 
@@ -74,7 +74,7 @@ function VerifyEmailPage() {
       ) : null}
 
       {mutation.data ? (
-        <TerraAlert tone="info" title="Email verified successfully!">
+        <TerraAlert tone="success" title="Email verified successfully!">
           <ul className="mt-2 space-y-1 text-body-sm">
             <li>
               <strong>Email:</strong> {mutation.data.email}

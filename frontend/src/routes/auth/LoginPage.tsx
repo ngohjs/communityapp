@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
-import { TerraAlert, TerraCard, TerraField, terraButtonClass } from "@/components/ui/terra";
+import { TerraAlert, TerraBadge, TerraButton, TerraCard, TerraField, TerraInput } from "@/components/ui/terra";
 import { toApiError } from "@/lib/api/client";
 import { useAuth } from "@/providers/AuthProvider";
 
@@ -58,7 +58,7 @@ function LoginPage() {
   return (
     <TerraCard
       title="Log in"
-      eyebrow={<span className="terra-badge">Member access</span>}
+      eyebrow={<TerraBadge tone="success">Member access</TerraBadge>}
       action={
         <span className="text-body-sm text-ink-500">
           Need an account? <Link to="/auth/register" className="text-accent-verdant underline-offset-4">Register instead</Link>
@@ -67,27 +67,27 @@ function LoginPage() {
       className="max-w-2xl"
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <TerraField label="Email address">
-          <input
+        <TerraField label="Email address" htmlFor="email" supportingText="Use the address associated with your Community App profile">
+          <TerraInput
+            id="email"
             type="email"
             name="email"
             value={values.email}
             onChange={(event) => setValues((prev) => ({ ...prev, email: event.target.value }))}
             required
             autoComplete="email"
-            className="terra-input"
           />
         </TerraField>
 
-        <TerraField label="Password">
-          <input
+        <TerraField label="Password" htmlFor="password">
+          <TerraInput
+            id="password"
             type="password"
             name="password"
             value={values.password}
             onChange={(event) => setValues((prev) => ({ ...prev, password: event.target.value }))}
             required
             autoComplete="current-password"
-            className="terra-input"
           />
         </TerraField>
 
@@ -98,9 +98,9 @@ function LoginPage() {
         </div>
 
         <div className="flex justify-end">
-          <button type="submit" disabled={mutation.isPending} className={terraButtonClass("primary")}>
-            {mutation.isPending ? "Signing in…" : "Sign in"}
-          </button>
+          <TerraButton type="submit" isLoading={mutation.isPending} loadingText="Signing in…">
+            Sign in
+          </TerraButton>
         </div>
       </form>
 
@@ -111,7 +111,7 @@ function LoginPage() {
       ) : null}
 
       {mutation.data ? (
-        <TerraAlert tone="info" title="Success">
+        <TerraAlert tone="success" title="Success">
           {authMessage}
           <br />
           Your session is active. You can continue browsing protected areas without re-authenticating.

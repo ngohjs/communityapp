@@ -1,7 +1,7 @@
 import { FormEvent, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 
-import { TerraAlert, TerraCard, TerraField, terraButtonClass } from "@/components/ui/terra";
+import { TerraAlert, TerraBadge, TerraButton, TerraCard, TerraField, TerraInput } from "@/components/ui/terra";
 import { apiClient, toApiError } from "@/lib/api/client";
 
 type ForgotPasswordPayload = {
@@ -33,7 +33,7 @@ function ForgotPasswordPage() {
   return (
     <TerraCard
       title="Forgot your password?"
-      eyebrow={<span className="terra-badge">Reset access</span>}
+      eyebrow={<TerraBadge tone="info">Reset access</TerraBadge>}
       action={<span className="text-body-sm text-ink-500">We’ll email a reset token</span>}
       className="max-w-2xl"
     >
@@ -43,22 +43,22 @@ function ForgotPasswordPage() {
       </p>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <TerraField label="Email address">
-          <input
+        <TerraField label="Email address" htmlFor="email" required>
+          <TerraInput
+            id="email"
             type="email"
             name="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             required
             autoComplete="email"
-            className="terra-input"
           />
         </TerraField>
 
         <div className="flex justify-end">
-          <button type="submit" disabled={mutation.isPending} className={terraButtonClass("primary")}>
-            {mutation.isPending ? "Sending reset link…" : "Send reset link"}
-          </button>
+          <TerraButton type="submit" isLoading={mutation.isPending} loadingText="Sending reset link…">
+            Send reset link
+          </TerraButton>
         </div>
       </form>
 
@@ -69,7 +69,7 @@ function ForgotPasswordPage() {
       ) : null}
 
       {mutation.data ? (
-        <TerraAlert tone="info" title="Email dispatched">
+        <TerraAlert tone="success" title="Email dispatched">
           {mutation.data.message}
           <br />
           Check the server logs for the reset token emitted by the stub provider, then continue to the reset form.

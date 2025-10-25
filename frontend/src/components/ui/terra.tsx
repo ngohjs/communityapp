@@ -10,6 +10,7 @@ import {
   useRef,
   useState
 } from "react";
+import { Slot } from "@radix-ui/react-slot";
 
 const cx = (...classes: Array<string | string[] | false | null | undefined>) =>
   classes
@@ -65,6 +66,7 @@ type TerraButtonProps = {
   iconOnly?: boolean;
   children?: ReactNode;
   className?: string;
+  asChild?: boolean;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 export function TerraButton({
@@ -81,6 +83,7 @@ export function TerraButton({
   className,
   disabled,
   type: typeAttr = "button",
+  asChild,
   ...rest
 }: TerraButtonProps) {
   const resolvedIconOnly = iconOnly ?? (!children && !!(leftIcon ?? rightIcon ?? icon));
@@ -89,15 +92,32 @@ export function TerraButton({
   const trailingIcon = isLoading ? null : rightIcon ?? null;
   const ariaBusy = isLoading ? true : undefined;
 
+  const buttonClasses = cx(terraButtonClass({ variant, size, fullWidth, iconOnly: resolvedIconOnly }), className);
+  const isDisabled = disabled || isLoading;
+
+  if (asChild) {
+    const { disabled: _disabled, type: _type, ...slotProps } = rest;
+    return (
+      <Slot
+        className={buttonClasses}
+        aria-busy={ariaBusy}
+        aria-disabled={isDisabled || undefined}
+        {...slotProps}
+      >
+        <span className="terra-btn__inner">
+          {leadingIcon ? <span className="terra-btn__icon" aria-hidden="true">{leadingIcon}</span> : null}
+          {contentLabel ? <span className="terra-btn__label">{contentLabel}</span> : null}
+          {trailingIcon ? <span className="terra-btn__icon" aria-hidden="true">{trailingIcon}</span> : null}
+        </span>
+      </Slot>
+    );
+  }
+
   return (
     <button
-      type="button"
-      className={cx(
-        terraButtonClass({ variant, size, fullWidth, iconOnly: resolvedIconOnly }),
-        className
-      )}
+      className={buttonClasses}
       aria-busy={ariaBusy}
-      disabled={disabled || isLoading}
+      disabled={isDisabled}
       type={typeAttr}
       {...rest}
     >
