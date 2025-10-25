@@ -147,54 +147,52 @@
     --terra-space-card-padding: var(--terra-card-padding);
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      color-scheme: dark;
-      --color-neutral-0: #0f1116;
-      --color-neutral-25: #151922;
-      --color-neutral-50: #1c232d;
-      --color-neutral-100: #212a33;
-      --color-neutral-200: #272f39;
-      --color-neutral-300: #2f3741;
-      --color-neutral-400: #3a434d;
-      --color-neutral-500: #4c5560;
-      --color-neutral-600: #69737d;
-      --color-neutral-700: #8d98a1;
-      --color-neutral-800: #c0c9d1;
-      --color-neutral-900: #edf1f6;
-      --color-neutral-1000: #f7f9fb;
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --color-neutral-0: #0f1116;
+    --color-neutral-25: #151922;
+    --color-neutral-50: #1c232d;
+    --color-neutral-100: #212a33;
+    --color-neutral-200: #272f39;
+    --color-neutral-300: #2f3741;
+    --color-neutral-400: #3a434d;
+    --color-neutral-500: #4c5560;
+    --color-neutral-600: #69737d;
+    --color-neutral-700: #8d98a1;
+    --color-neutral-800: #c0c9d1;
+    --color-neutral-900: #edf1f6;
+    --color-neutral-1000: #f7f9fb;
 
-      --color-clay-500: #d1816b;
-      --color-clay-600: #e59a85;
-      --color-verdant-500: #7ec097;
-      --color-verdant-600: #6aa97f;
+    --color-clay-500: #d1816b;
+    --color-clay-600: #e59a85;
+    --color-verdant-500: #7ec097;
+    --color-verdant-600: #6aa97f;
 
-      --terra-background-page: #12161e;
-      --terra-background-surface: #1d232c;
-      --terra-background-subtle: #252c35;
-      --terra-background-highlight: rgba(217, 153, 132, 0.08);
-      --terra-background-overlay: rgba(7, 9, 14, 0.72);
+    --terra-background-page: #12161e;
+    --terra-background-surface: #1d232c;
+    --terra-background-subtle: #252c35;
+    --terra-background-highlight: rgba(217, 153, 132, 0.08);
+    --terra-background-overlay: rgba(7, 9, 14, 0.72);
 
-      --terra-text-strong: var(--color-neutral-900);
-      --terra-text-body: var(--color-neutral-800);
-      --terra-text-muted: rgba(208, 216, 223, 0.72);
-      --terra-text-subtle: rgba(208, 216, 223, 0.52);
-      --terra-text-inverse: var(--color-neutral-0);
+    --terra-text-strong: var(--color-neutral-900);
+    --terra-text-body: var(--color-neutral-800);
+    --terra-text-muted: rgba(208, 216, 223, 0.72);
+    --terra-text-subtle: rgba(208, 216, 223, 0.52);
+    --terra-text-inverse: var(--color-neutral-0);
 
-      --terra-border-strong: rgba(208, 216, 223, 0.14);
-      --terra-border-soft: rgba(208, 216, 223, 0.08);
-      --terra-border-focus: rgba(126, 192, 151, 0.6);
+    --terra-border-strong: rgba(208, 216, 223, 0.14);
+    --terra-border-soft: rgba(208, 216, 223, 0.08);
+    --terra-border-focus: rgba(126, 192, 151, 0.6);
 
-      --terra-action-secondary-bg: rgba(208, 216, 223, 0.08);
-      --terra-action-secondary-bg-hover: rgba(208, 216, 223, 0.16);
-      --terra-action-secondary-text: var(--color-neutral-900);
+    --terra-action-secondary-bg: rgba(208, 216, 223, 0.08);
+    --terra-action-secondary-bg-hover: rgba(208, 216, 223, 0.16);
+    --terra-action-secondary-text: var(--color-neutral-900);
 
-      --shadow-level-1: 0 12px 36px -24px rgba(7, 9, 14, 0.6);
-      --shadow-level-2: 0 26px 48px -20px rgba(7, 9, 14, 0.65);
-      --shadow-ledger: 0 26px 48px -28px rgba(7, 9, 14, 0.68), inset 0 1px 0 rgba(217, 229, 240, 0.08);
-      --terra-focus-ring: rgba(126, 192, 151, 0.45);
-      --terra-focus-shadow: 0 0 0 3px rgba(126, 192, 151, 0.28);
-    }
+    --shadow-level-1: 0 12px 36px -24px rgba(7, 9, 14, 0.6);
+    --shadow-level-2: 0 26px 48px -20px rgba(7, 9, 14, 0.65);
+    --shadow-ledger: 0 26px 48px -28px rgba(7, 9, 14, 0.68), inset 0 1px 0 rgba(217, 229, 240, 0.08);
+    --terra-focus-ring: rgba(126, 192, 151, 0.45);
+    --terra-focus-shadow: 0 0 0 3px rgba(126, 192, 151, 0.28);
   }
 
   body {

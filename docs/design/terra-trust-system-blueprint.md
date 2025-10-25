@@ -81,4 +81,4 @@
 ---
 
 ### Progress Log
-- **2024-10-24** – Phase 1 initiated: primitive + semantic tokens encoded in CSS variables, Tailwind theme consumes new tokens, Work Sans data font added to baseline typography stack, dark-mode scaffolding in place.
+- **2024-10-24** – Phase 1 initiated: primitive + semantic tokens encoded in CSS variables, Tailwind theme consumes new tokens, Work Sans data font added to baseline typography stack, dark-mode scaffolding gated behind `data-theme="dark"` for future opt-in.
