@@ -63,6 +63,14 @@ class Settings(BaseSettings):
         default="ChangeMe123!",
         description="Seed admin password (plain text, used only for dev seeding)",
     )
+    seed_member_email: Optional[str] = Field(
+        default="member.qa@example.com", description="Seed QA member login email"
+    )
+    seed_member_first_name: str = Field(default="Mia", description="Seed member first name")
+    seed_member_last_name: str = Field(default="Member", description="Seed member last name")
+    seed_member_password: str = Field(
+        default="MemberPass123!", description="Seed member password (plain text)"
+    )
     seed_categories: List[str] = Field(
         default_factory=lambda: [
             "Sales Playbooks",

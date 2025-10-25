@@ -1,14 +1,17 @@
 from __future__ import annotations
 
 from datetime import datetime
+from pathlib import Path
 from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
+from fastapi.responses import FileResponse
 from sqlalchemy import desc, func
 from sqlalchemy.orm import Session
 
 from ...dependencies import get_current_user, get_db
+from ...config import get_settings
 from ...models.comment import Comment, CommentStatus
 from ...models.content import ContentItem, ContentStatus
 from ...models.category import Category
@@ -31,8 +34,19 @@ from ...schemas.comment import (
 from ...schemas.like import LikeResponse
 from ...services.audit_service import log_action
 from ...services.comment_service import create_comment, delete_comment, update_comment
-from ...services.download_service import generate_download_token
+from ...services.download_service import decode_download_token, generate_download_token
 from ...services.like_service import add_like, remove_like
+
+EXTENSION_CONTENT_TYPES = {
+    "pdf": "application/pdf",
+    "ppt": "application/vnd.ms-powerpoint",
+    "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "doc": "application/msword",
+    "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "png": "image/png",
+    "jpg": "image/jpeg",
+    "mp4": "video/mp4",
+}
 
 
 router = APIRouter(prefix="/content", tags=["content"])
@@ -212,6 +226,28 @@ def generate_download(
     db.commit()
 
     return ContentDownloadResponse(token=token)
+
+
+@router.get("/{content_id}/download")
+def stream_download(content_id: UUID, token: str = Query(...), db: Session = Depends(get_db)) -> FileResponse:
+    try:
+        payload = decode_download_token(token)
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Invalid download token") from exc
+
+    if payload.get("sub") != str(content_id):
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Token does not match content")
+
+    content = _get_published_content_or_404(db, content_id)
+
+    settings = get_settings()
+    file_path = Path(settings.media_root) / content.file_path
+    if not file_path.exists():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="File not found")
+
+    media_type = EXTENSION_CONTENT_TYPES.get(content.file_type.lower(), "application/octet-stream")
+    filename = Path(content.file_path).name
+    return FileResponse(file_path, media_type=media_type, filename=filename)
 
 
 @router.post(

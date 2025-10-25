@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Community App Design Systems – Visual Explorations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=General+Sans:wght@400;500;700&family=Inter:wght@400;500;600;700&family=Recoleta:wght@500;700&family=IBM+Plex+Sans:wght@400;500&family=Satoshi:wght@300;500;700&family=Work+Sans:wght@400;500&family=Source+Serif+Pro:wght@400;600&family=Roboto:wght@400;500&family=Space+Grotesk:wght@500;700&family=Manrope:wght@400;600&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #0f1116;
+        color: #f7f8fb;
+      }
+
+      header {
+        padding: 48px 6vw 24px;
+        background: linear-gradient(135deg, rgba(79, 118, 255, 0.4), rgba(20, 20, 38, 0.8));
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      header h1 {
+        margin: 0 0 12px;
+        font-size: clamp(32px, 3vw, 44px);
+        letter-spacing: -0.01em;
+      }
+
+      header p {
+        max-width: 760px;
+        margin: 0;
+        color: rgba(241, 245, 255, 0.7);
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      main {
+        padding: 48px 6vw 64px;
+        display: grid;
+        gap: 56px;
+      }
+
+      section.design-card {
+        border-radius: 32px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 48px;
+        background: linear-gradient(145deg, rgba(19, 21, 33, 0.95), rgba(12, 14, 22, 0.9));
+        display: grid;
+        gap: 28px;
+      }
+
+      .design-card h2 {
+        margin: 0;
+        font-size: 28px;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+      }
+
+      .philosophy {
+        font-size: 16px;
+        line-height: 1.7;
+        color: rgba(244, 247, 252, 0.8);
+        max-width: 780px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 24px;
+      }
+
+      .swatches {
+        display: grid;
+        gap: 12px;
+        font-size: 14px;
+      }
+
+      .swatch {
+        border-radius: 20px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .swatch span.label {
+        font-weight: 600;
+      }
+
+      .swatch span.hex {
+        font-family: "Space Grotesk", monospace;
+        opacity: 0.7;
+      }
+
+      .typography {
+        display: grid;
+        gap: 12px;
+      }
+
+      .type-sample {
+        padding: 18px 20px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .type-sample h3 {
+        margin: 0 0 6px;
+        font-size: 18px;
+        opacity: 0.75;
+      }
+
+      .spacing-grid {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .spacing-grid div {
+        padding: 12px 16px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        font-family: "Space Grotesk", monospace;
+      }
+
+      .signature {
+        padding: 24px;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.02);
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      .motion ul {
+        margin: 0;
+        padding-left: 20px;
+        line-height: 1.6;
+        color: rgba(244, 247, 252, 0.78);
+      }
+
+      footer {
+        padding: 40px 6vw;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.4);
+        text-align: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      /* System-specific tokens */
+      .pipeline {
+        background: linear-gradient(135deg, rgba(36, 39, 58, 0.95), rgba(84, 81, 255, 0.1));
+      }
+
+      .field-notes {
+        background: linear-gradient(135deg, rgba(42, 49, 55, 0.95), rgba(217, 182, 141, 0.15));
+      }
+
+      .aurora {
+        background: linear-gradient(135deg, rgba(42, 45, 58, 0.95), rgba(127, 90, 240, 0.18));
+      }
+
+      .terra {
+        background: linear-gradient(135deg, rgba(35, 41, 46, 0.95), rgba(180, 106, 85, 0.18));
+      }
+
+      .quantum {
+        background: linear-gradient(135deg, rgba(18, 20, 28, 0.95), rgba(42, 210, 255, 0.12));
+      }
+
+      @media (max-width: 768px) {
+        section.design-card {
+          padding: 32px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Community App — Visual Design Systems</h1>
+      <p>
+        Five contrasting visual directions derived from the Community App PRD, tailored for sales leaders,
+        influencers, and reps collaborating on content. Each block illustrates color, type, layout, signature
+        elements, and motion principles.
+      </p>
+    </header>
+
+    <main>
+      <!-- Pipeline Pulse -->
+      <section class="design-card pipeline">
+        <h2>01 · Pipeline Pulse — Momentum Through Clarity</h2>
+        <p class="philosophy">
+          Energetic CRM-inspired UI emphasizing speed and laser focus. Built for sales teams racing through
+          content catalogs with no ambiguity.
+        </p>
+
+        <div class="grid">
+          <div class="swatches">
+            <div class="swatch" style="background:#5451FF;color:#F7F8FB;">
+              <span class="label">Electric Indigo</span>
+              <span class="hex">#5451FF</span>
+            </div>
+            <div class="swatch" style="background:#FF6B5A;color:#1F2230;">
+              <span class="label">Signal Coral</span>
+              <span class="hex">#FF6B5A</span>
+            </div>
+            <div class="swatch" style="background:#F4F7FB;color:#1B2030;">
+              <span class="label">Arctic Mist</span>
+              <span class="hex">#F4F7FB</span>
+            </div>
+            <div class="swatch" style="background:#24273A;color:#F4F7FB;">
+              <span class="label">Graphite</span>
+              <span class="hex">#24273A</span>
+            </div>
+          </div>
+
+          <div class="typography">
+            <div class="type-sample" style="font-family:'General Sans', sans-serif;">
+              <h3>Headlines — General Sans Bold 700</h3>
+              <p style="font-size:32px;margin:0;">Accelerate pipeline clarity</p>
+            </div>
+            <div class="type-sample" style="font-family:'Inter', sans-serif;">
+              <h3>Body/UI — Inter Regular 400</h3>
+              <p style="font-size:16px;margin:0;">
+                Library cards use Inter 600 for labels, 400 for summaries, maintaining crisp readability.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="spacing-grid">
+          <div>Spacing: 8 · 16 · 24 · 32</div>
+          <div>Grid: 12-col / 96px margins</div>
+          <div>Card Width: 4-col increments</div>
+        </div>
+
+        <div class="signature">
+          <strong>Signature Element:</strong> Oblique “momentum bar” — an angled gradient slab that slides behind
+          featured content to indicate progress and urgency.
+        </div>
+
+        <div class="motion">
+          <strong>Motion Principles:</strong>
+          <ul>
+            <li>Fast transitions (120ms ease-out) mirroring decisive sales actions.</li>
+            <li>Horizontal carousels shift 12px with slight overshoot.</li>
+            <li>Hover micro-motions scale CTAs to 1.03 for tactile feedback.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Field Notes -->
+      <section class="design-card field-notes">
+        <h2>02 · Field Notes — Analog Warmth for Digital Peers</h2>
+        <p class="philosophy">
+          Feels like a trusted field journal. Friendly for reps capturing insights, with tactile visuals and calm
+          typography.
+        </p>
+
+        <div class="grid">
+          <div class="swatches">
+            <div class="swatch" style="background:#D9B68D;color:#1F252C;">
+              <span class="label">Kraft Tan</span>
+              <span class="hex">#D9B68D</span>
+            </div>
+            <div class="swatch" style="background:#1F3A60;color:#F3F5F9;">
+              <span class="label">Blueprint Navy</span>
+              <span class="hex">#1F3A60</span>
+            </div>
+            <div class="swatch" style="background:#9EE7D7;color:#102027;">
+              <span class="label">Highlighter Mint</span>
+              <span class="hex">#9EE7D7</span>
+            </div>
+            <div class="swatch" style="background:#3C3C3C;color:#F7F8FB;">
+              <span class="label">Soft Charcoal</span>
+              <span class="hex">#3C3C3C</span>
+            </div>
+          </div>
+
+          <div class="typography">
+            <div class="type-sample" style="font-family:'Recoleta', serif;">
+              <h3>Headlines — Recoleta Bold 700</h3>
+              <p style="font-size:30px;margin:0;">Curated playbooks, handwritten warmth</p>
+            </div>
+            <div class="type-sample" style="font-family:'IBM Plex Sans', sans-serif;">
+              <h3>Body/UI — IBM Plex Sans 400/500</h3>
+              <p style="font-size:15px;margin:0;">
+                Structured labels feel like notebook annotations, balancing legibility and personality.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="spacing-grid">
+          <div>Spacing: 6 · 12 · 18 · 24</div>
+          <div>Grid: 10-col / 84px gutters</div>
+          <div>Mobile: Fluid stacked cards</div>
+        </div>
+
+        <div class="signature">
+          <strong>Signature Element:</strong> “Tabbed notebook edge” — dashed dividers and corner tabs create the
+          feel of a physical journal.
+        </div>
+
+        <div class="motion">
+          <strong>Motion Principles:</strong>
+          <ul>
+            <li>Gentle 180ms ease-in-out transitions mimicking page flips.</li>
+            <li>Tab changes include 2° tilt and shadow shift.</li>
+            <li>Highlight sweeps animate like scribbled highlighter strokes.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Aurora Canvas -->
+      <section class="design-card aurora">
+        <h2>03 · Aurora Canvas — Guided Discovery via Light</h2>
+        <p class="philosophy">
+          Sweeping gradients and airy layouts invite exploration, ideal for leaders sifting through curated decks.
+        </p>
+
+        <div class="grid">
+          <div class="swatches">
+            <div class="swatch" style="background:#7F5AF0;color:#F8F7FF;">
+              <span class="label">Aurora Violet</span>
+              <span class="hex">#7F5AF0</span>
+            </div>
+            <div class="swatch" style="background:#FFB3A7;color:#1F1C26;">
+              <span class="label">Dawn Peach</span>
+              <span class="hex">#FFB3A7</span>
+            </div>
+            <div class="swatch" style="background:#FCFCFF;color:#1E2130;">
+              <span class="label">Polar White</span>
+              <span class="hex">#FCFCFF</span>
+            </div>
+            <div class="swatch" style="background:#2A2D3A;color:#F1F4FF;">
+              <span class="label">Midnight Ink</span>
+              <span class="hex">#2A2D3A</span>
+            </div>
+          </div>
+
+          <div class="typography">
+            <div class="type-sample" style="font-family:'Satoshi', sans-serif;">
+              <h3>Headlines — Satoshi Light/Bold Combo</h3>
+              <p style="font-size:34px;margin:0;">Illuminated resource discovery</p>
+            </div>
+            <div class="type-sample" style="font-family:'Work Sans', sans-serif;">
+              <h3>Body/UI — Work Sans 400/500</h3>
+              <p style="font-size:16px;margin:0;">
+                Friendly geometric sans keeps the experience soft while remaining highly legible.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="spacing-grid">
+          <div>Spacing: 12 · 24 · 36</div>
+          <div>Grid: 16-col fluid / 80px gutters</div>
+          <div>Hero overlay uses parallax</div>
+        </div>
+
+        <div class="signature">
+          <strong>Signature Element:</strong> “Aurora arc” — flowing gradient ribbons weaving behind hero content,
+          subtly shifting hue as the user scrolls.
+        </div>
+
+        <div class="motion">
+          <strong>Motion Principles:</strong>
+          <ul>
+            <li>Parallax gradients at 0.75x scroll speed.</li>
+            <li>Cards fade-up 20px over 160ms (ease-in-out).</li>
+            <li>Hover reveals luminous edge glow expanding outward.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Terra Trust -->
+      <section class="design-card terra">
+        <h2>04 · Terra Trust — Grounded Reliability for Enterprise Leaders</h2>
+        <p class="philosophy">
+          Earthy, data-driven aesthetic instilling confidence for senior stakeholders reviewing strategic assets.
+        </p>
+
+        <div class="grid">
+          <div class="swatches">
+            <div class="swatch" style="background:#B46A55;color:#F8F0EB;">
+              <span class="label">Terra Clay</span>
+              <span class="hex">#B46A55</span>
+            </div>
+            <div class="swatch" style="background:#2E3B45;color:#F2F7FA;">
+              <span class="label">Boardroom Slate</span>
+              <span class="hex">#2E3B45</span>
+            </div>
+            <div class="swatch" style="background:#6AA97F;color:#0F1614;">
+              <span class="label">Verdant Accent</span>
+              <span class="hex">#6AA97F</span>
+            </div>
+            <div class="swatch" style="background:#E6ECF1;color:#1D2428;">
+              <span class="label">Outlook Mist</span>
+              <span class="hex">#E6ECF1</span>
+            </div>
+          </div>
+
+          <div class="typography">
+            <div class="type-sample" style="font-family:'Source Serif Pro', serif;">
+              <h3>Headlines — Source Serif Pro SemiBold 600</h3>
+              <p style="font-size:30px;margin:0;">Executive insights, grounded</p>
+            </div>
+            <div class="type-sample" style="font-family:'Roboto', sans-serif;">
+              <h3>Body/UI — Roboto 400/500</h3>
+              <p style="font-size:16px;margin:0;">
+                Roboto ensures crisp readability for dense metrics and audit trails.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="spacing-grid">
+          <div>Spacing: 10 · 20 · 30</div>
+          <div>Grid: 12-col / 112px margins</div>
+          <div>Cards: 30px padding, 20px radius</div>
+        </div>
+
+        <div class="signature">
+          <strong>Signature Element:</strong> “Performance ledger” — subtle horizontal rules and embossed badges on
+          cards reminiscent of premium reports.
+        </div>
+
+        <div class="motion">
+          <strong>Motion Principles:</strong>
+          <ul>
+            <li>Measured 200ms ease-out transitions; no flashy easing.</li>
+            <li>KPI counters animate from 0 to value in 600ms.</li>
+            <li>Modals slide up 12px with light shadow expansion.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Quantum Loop -->
+      <section class="design-card quantum">
+        <h2>05 · Quantum Loop — Modular Network for Agile Teams</h2>
+        <p class="philosophy">
+          Futuristic node-based UI illustrating knowledge moving through the community, ideal for fast-moving reps.
+        </p>
+
+        <div class="grid">
+          <div class="swatches">
+            <div class="swatch" style="background:#2AD2FF;color:#021018;">
+              <span class="label">Neon Azure</span>
+              <span class="hex">#2AD2FF</span>
+            </div>
+            <div class="swatch" style="background:#151820;color:#EAF5FF;">
+              <span class="label">Cosmic Graphite</span>
+              <span class="hex">#151820</span>
+            </div>
+            <div class="swatch" style="background:#A6FF00;color:#021001;">
+              <span class="label">Signal Lime</span>
+              <span class="hex">#A6FF00</span>
+            </div>
+            <div class="swatch" style="background:#3F4B5C;color:#EEF5FF;">
+              <span class="label">Soft Steel</span>
+              <span class="hex">#3F4B5C</span>
+            </div>
+          </div>
+
+          <div class="typography">
+            <div class="type-sample" style="font-family:'Space Grotesk', sans-serif;">
+              <h3>Headlines — Space Grotesk Bold 700</h3>
+              <p style="font-size:32px;margin:0;">Dynamic knowledge mesh</p>
+            </div>
+            <div class="type-sample" style="font-family:'Manrope', sans-serif;">
+              <h3>Body/UI — Manrope 400/600</h3>
+              <p style="font-size:16px;margin:0;">
+                Rounded geometry keeps the sci-fi visual language human and approachable.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="spacing-grid">
+          <div>Spacing: 4 · 8 · 16 · 32</div>
+          <div>Grid: 18-col modular</div>
+          <div>Nodes snap to dotted matrix</div>
+        </div>
+
+        <div class="signature">
+          <strong>Signature Element:</strong> Animated node mesh overlay pulsing subtly to represent collaboration
+          pathways between members and content artifacts.
+        </div>
+
+        <div class="motion">
+          <strong>Motion Principles:</strong>
+          <ul>
+            <li>Spring physics (stiffness 150) for card reveals.</li>
+            <li>Hover shifts 8px with 100ms delay, plus neon glow.</li>
+            <li>Context panels unfold from nodes with scale/opacity combo.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Inspired by tooling from HubSpot, Notion, Airbnb, Salesforce, and Linear. © 2025 Visual Explorations
+    </footer>
+  </body>
+</html>

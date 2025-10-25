@@ -2,6 +2,7 @@ import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
+import { TerraAlert, TerraBadge, TerraButton, TerraCard, TerraField, TerraInput } from "@/components/ui/terra";
 import { apiClient, toApiError } from "@/lib/api/client";
 
 type RegisterPayload = {
@@ -54,61 +55,56 @@ function RegisterPage() {
   const error = validationError ?? (mutation.error ? toApiError(mutation.error).message : null);
 
   return (
-    <section className="flex flex-col gap-8 rounded-3xl border border-slate-800 bg-slate-900/60 p-10 shadow-xl shadow-indigo-500/10">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-semibold text-white">Create an account</h1>
-        <p className="text-sm text-slate-400">
-          Join the Community App to access exclusive content. Already have an account?{" "}
-          <Link to="/auth/login" className="font-semibold text-brand">
-            Sign in
-          </Link>
-          .
-        </p>
-      </header>
-
+    <TerraCard
+      title="Create an account"
+      eyebrow={<TerraBadge tone="success">New member</TerraBadge>}
+      action={
+        <span className="text-body-sm text-ink-500">
+          Already have an account? <Link to="/auth/login" className="text-accent-verdant underline-offset-4">Sign in</Link>
+        </span>
+      }
+      className="max-w-3xl"
+    >
       <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2 md:gap-6">
-        <label className="flex flex-col gap-2 text-sm">
-          <span className="text-slate-300">First name</span>
-          <input
+        <TerraField label="First name" htmlFor="first_name" required>
+          <TerraInput
+            id="first_name"
             type="text"
             name="first_name"
             value={values.first_name}
             onChange={(event) => setValues((prev) => ({ ...prev, first_name: event.target.value }))}
             required
             autoComplete="given-name"
-            className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/40"
           />
-        </label>
+        </TerraField>
 
-        <label className="flex flex-col gap-2 text-sm">
-          <span className="text-slate-300">Last name</span>
-          <input
+        <TerraField label="Last name" htmlFor="last_name" required>
+          <TerraInput
+            id="last_name"
             type="text"
             name="last_name"
             value={values.last_name}
             onChange={(event) => setValues((prev) => ({ ...prev, last_name: event.target.value }))}
             required
             autoComplete="family-name"
-            className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/40"
           />
-        </label>
+        </TerraField>
 
-        <label className="flex flex-col gap-2 text-sm md:col-span-2">
-          <span className="text-slate-300">Email address</span>
-          <input
+        <TerraField label="Email address" htmlFor="email" supportingText="We’ll send verification instructions here" className="md:col-span-2">
+          <TerraInput
+            id="email"
             type="email"
             name="email"
             value={values.email}
             onChange={(event) => setValues((prev) => ({ ...prev, email: event.target.value }))}
             required
             autoComplete="email"
-            className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/40"
           />
-        </label>
+        </TerraField>
 
-        <label className="flex flex-col gap-2 text-sm">
-          <span className="text-slate-300">Password</span>
-          <input
+        <TerraField label="Password" htmlFor="password" supportingText="Minimum 8 characters" required>
+          <TerraInput
+            id="password"
             type="password"
             name="password"
             value={values.password}
@@ -116,13 +112,18 @@ function RegisterPage() {
             required
             autoComplete="new-password"
             minLength={8}
-            className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/40"
           />
-        </label>
+        </TerraField>
 
-        <label className="flex flex-col gap-2 text-sm">
-          <span className="text-slate-300">Confirm password</span>
-          <input
+        <TerraField
+          label="Confirm password"
+          htmlFor="confirm_password"
+          status={validationError ? "error" : "default"}
+          validationText={validationError ?? undefined}
+          required
+        >
+          <TerraInput
+            id="confirm_password"
             type="password"
             name="confirm_password"
             value={confirmPassword}
@@ -130,47 +131,35 @@ function RegisterPage() {
             required
             autoComplete="new-password"
             minLength={8}
-            className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/40"
           />
-        </label>
+        </TerraField>
 
-        <button
-          type="submit"
-          disabled={mutation.isPending}
-          className="md:col-span-2 inline-flex items-center justify-center rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-brand-foreground shadow-lg transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-70"
-        >
-          {mutation.isPending ? "Creating account…" : "Create account"}
-        </button>
+        <div className="md:col-span-2 flex justify-end">
+          <TerraButton type="submit" isLoading={mutation.isPending} loadingText="Creating account…">
+            Create account
+          </TerraButton>
+        </div>
       </form>
 
       {error ? (
-        <p className="rounded-md border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+        <TerraAlert tone="danger" title="Registration failed">
           {error}
-        </p>
+        </TerraAlert>
       ) : null}
 
       {mutation.data ? (
-        <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-5 py-4 text-sm text-emerald-200">
-          <p className="font-semibold text-emerald-100">
-            Account created for {mutation.data.email}. Status: {mutation.data.status}.
-          </p>
-          <p className="mt-2 text-emerald-200/80">
-            Use the verification token below to confirm the account. In production this would be emailed via the
-            notifications service.
-          </p>
-          <code className="mt-3 block rounded-md bg-slate-950/60 px-4 py-3 text-xs text-emerald-100">
+        <TerraAlert tone="success" title="Account created">
+          Account created for {mutation.data.email}. Status: {mutation.data.status}.<br />
+          Use the verification token below to confirm the account. In production this would be emailed via the notifications service.
+          <code className="mt-3 block rounded-md bg-[rgba(46,59,69,0.1)] px-4 py-3 text-xs text-ink-700">
             {mutation.data.verification_token}
           </code>
-          <p className="mt-2 text-xs text-emerald-200/70">
-            You can copy the token and visit the{" "}
-            <Link to="/auth/verify-email" className="font-semibold text-brand">
-              verification page
-            </Link>{" "}
-            to complete the flow.
-          </p>
-        </div>
+          <span className="mt-2 block text-xs text-ink-500">
+            You can copy the token and visit the <Link to="/auth/verify-email" className="text-accent-verdant underline">verification page</Link> to complete the flow.
+          </span>
+        </TerraAlert>
       ) : null}
-    </section>
+    </TerraCard>
   );
 }
 

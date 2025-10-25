@@ -1,9 +1,8 @@
 import { FormEvent, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
-import {
-  useContentCategories
-} from "@/hooks/useContentLibrary";
+import { TerraAlert, TerraCard, TerraField, TerraLedgerSection, terraButtonClass } from "@/components/ui/terra";
+import { useContentCategories } from "@/hooks/useContentLibrary";
 import {
   contentCommentsKey,
   contentDetailKey,
@@ -27,7 +26,6 @@ function formatDate(value: string | null) {
 
 export default function ContentDetailPage() {
   const { contentId } = useParams();
-  const navigate = useNavigate();
   const { user } = useAuth();
 
   const detailQuery = useContentDetail(contentId);
@@ -52,31 +50,28 @@ export default function ContentDetailPage() {
 
   if (!contentId) {
     return (
-      <section className="rounded-3xl border border-red-500/40 bg-red-500/10 p-10 text-center text-sm text-red-200">
-        Invalid content identifier.
-      </section>
+      <TerraAlert tone="danger" title="Invalid content identifier">
+        The requested content item could not be loaded.
+      </TerraAlert>
     );
   }
 
   if (detailQuery.isLoading) {
-    return (
-      <section className="rounded-3xl border border-slate-800 bg-slate-900/60 p-10 text-center text-sm text-slate-300">
-        Loading content details…
-      </section>
-    );
+    return <TerraCard title="Loading">Loading content details…</TerraCard>;
   }
 
   if (detailQuery.error || !detailQuery.data) {
     return (
-      <section className="rounded-3xl border border-red-500/40 bg-red-500/10 p-10 text-center text-sm text-red-200">
-        Failed to load content: {detailQuery.error?.message ?? "unknown error"}
-      </section>
+      <TerraAlert tone="danger" title="Failed to load content">
+        {detailQuery.error?.message ?? "unknown error"}
+      </TerraAlert>
     );
   }
 
   const detail = detailQuery.data;
   const comments = commentsQuery.data?.items ?? [];
-  const categoryName = detail.category_name ?? (detail.category_id ? categoryMap.get(detail.category_id) ?? "–" : "Uncategorized");
+  const categoryName =
+    detail.category_name ?? (detail.category_id ? categoryMap.get(detail.category_id) ?? "–" : "Uncategorized");
 
   const handleLikeToggle = () => {
     if (detail.liked_by_me) {
@@ -114,12 +109,15 @@ export default function ContentDetailPage() {
   const handleUpdateComment = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!editingCommentId) return;
-    updateCommentMutation.mutate({ commentId: editingCommentId, body: editingCommentBody.trim() }, {
-      onSuccess: () => {
-        setEditingCommentId(null);
-        setEditingCommentBody("");
+    updateCommentMutation.mutate(
+      { commentId: editingCommentId, body: editingCommentBody.trim() },
+      {
+        onSuccess: () => {
+          setEditingCommentId(null);
+          setEditingCommentBody("");
+        }
       }
-    });
+    );
   };
 
   const handleDeleteComment = (commentId: string) => {
@@ -129,166 +127,141 @@ export default function ContentDetailPage() {
 
   return (
     <section className="flex flex-col gap-8">
-      <button
-        type="button"
-        onClick={() => navigate(-1)}
-        className="inline-flex w-fit rounded-lg border border-slate-700 px-4 py-2 text-xs font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white"
-      >
-        ← Back
-      </button>
+      <Link to="/content" className={terraButtonClass({ variant: "ghost" }) + " w-fit px-6"}>
+        ← Back to library
+      </Link>
 
-      <header className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/60 p-8 shadow-lg shadow-slate-900/40">
-        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-semibold text-white">{detail.title}</h1>
-            <p className="text-sm text-slate-400">{detail.description ?? "No description provided."}</p>
-            <dl className="grid gap-3 text-xs text-slate-400 sm:grid-cols-2 lg:grid-cols-3">
+      <TerraCard title={detail.title} eyebrow={<TerraBadge tone="neutral">{categoryName}</TerraBadge>}>
+        <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
+          <div className="space-y-4">
+            <p className="text-body-lg text-ink-700">{detail.description ?? "No description provided."}</p>
+            <dl className="grid gap-4 text-body-sm text-ink-600 sm:grid-cols-2">
               <div>
-                <dt className="uppercase tracking-wide text-slate-500">Category</dt>
-                <dd className="text-sm text-slate-200">{categoryName}</dd>
+                <dt className="terra-field-label">File type</dt>
+                <dd className="text-ink-900">{detail.file_type.toUpperCase()}</dd>
               </div>
               <div>
-                <dt className="uppercase tracking-wide text-slate-500">File type</dt>
-                <dd className="text-sm text-slate-200">{detail.file_type.toUpperCase()}</dd>
-              </div>
-              <div>
-                <dt className="uppercase tracking-wide text-slate-500">File size</dt>
-                <dd className="text-sm text-slate-200">
+                <dt className="terra-field-label">File size</dt>
+                <dd className="text-ink-900">
                   {detail.file_size ? `${(detail.file_size / (1024 * 1024)).toFixed(2)} MB` : "—"}
                 </dd>
               </div>
               <div>
-                <dt className="uppercase tracking-wide text-slate-500">Published</dt>
-                <dd className="text-sm text-slate-200">{formatDate(detail.published_at)}</dd>
+                <dt className="terra-field-label">Published</dt>
+                <dd className="text-ink-900">{formatDate(detail.published_at)}</dd>
               </div>
               <div>
-                <dt className="uppercase tracking-wide text-slate-500">Updated</dt>
-                <dd className="text-sm text-slate-200">{formatDate(detail.updated_at)}</dd>
+                <dt className="terra-field-label">Updated</dt>
+                <dd className="text-ink-900">{formatDate(detail.updated_at)}</dd>
               </div>
               <div>
-                <dt className="uppercase tracking-wide text-slate-500">Uploader</dt>
-                <dd className="text-sm text-slate-200">{detail.owner_name ?? "—"}</dd>
+                <dt className="terra-field-label">Uploader</dt>
+                <dd className="text-ink-900">{detail.owner_name ?? "—"}</dd>
               </div>
             </dl>
           </div>
           <div className="flex flex-col gap-3">
-            <button
-              type="button"
+            <TerraButton
+              variant="ghost"
               onClick={handleLikeToggle}
               disabled={likeMutation.isPending || unlikeMutation.isPending}
-              className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {detail.liked_by_me ? "Unlike" : "Like"} ({detail.likes_count})
-            </button>
-            <button
-              type="button"
+            </TerraButton>
+            <TerraButton
+              variant="primary"
               onClick={handleDownload}
               disabled={downloadMutation.isPending}
-              className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground shadow-lg shadow-brand/30 transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {downloadMutation.isPending ? "Preparing download…" : "Download"}
-            </button>
+            </TerraButton>
           </div>
         </div>
-      </header>
+      </TerraCard>
 
-      <section className="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/60 p-6">
-        <header className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-white">Comments ({detail.comments_count})</h2>
-          <span className="text-xs text-slate-500">Newest at bottom</span>
-        </header>
-
+      <TerraLedgerSection title={`Comments (${detail.comments_count})`} description="Newest at bottom">
         <form onSubmit={handleCreateComment} className="flex flex-col gap-3">
-          <label htmlFor="new-comment" className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Add a comment
-          </label>
-          <textarea
-            id="new-comment"
-            value={newComment}
-            onChange={(event) => setNewComment(event.target.value)}
-            placeholder="Share your thoughts or tips…"
-            className="min-h-[80px] rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none focus:border-brand focus:ring-2 focus:ring-brand/40"
-            maxLength={1000}
-          />
+          <TerraField label="Add a comment" htmlFor="new-comment">
+            <TerraTextarea
+              id="new-comment"
+              value={newComment}
+              onChange={(event) => setNewComment(event.target.value)}
+              placeholder="Share your thoughts or tips…"
+              className="min-h-[100px]"
+              maxLength={1000}
+            />
+          </TerraField>
           <div className="flex justify-end gap-3 text-sm">
-            <button
+            <TerraButton
               type="submit"
               disabled={createCommentMutation.isPending || !newComment.trim()}
-              className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground shadow-lg transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {createCommentMutation.isPending ? "Posting…" : "Post comment"}
-            </button>
+            </TerraButton>
           </div>
         </form>
 
         <div className="space-y-4">
           {comments.length === 0 ? (
-            <p className="rounded-2xl border border-slate-800 bg-slate-950/60 p-6 text-sm text-slate-300">
-              No comments yet. Be the first to share your insights!
-            </p>
+            <TerraAlert tone="info">No comments yet. Be the first to share your insights!</TerraAlert>
           ) : (
             comments.map((comment) => {
-              const isAuthor = comment.author_id && user?.id === comment.author_id;
+              const isAuthor = user?.id && comment.author_id === user.id;
               const isEditing = editingCommentId === comment.id;
               return (
-                <article key={comment.id} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-6">
-                  <header className="mb-2 flex items-center justify-between text-xs text-slate-500">
-                    <span>Posted {formatDate(comment.created_at)}</span>
-                    {isAuthor && (
-                      <div className="flex gap-2">
-                        <button
-                          type="button"
-                          onClick={() => startEditingComment(comment.id, comment.body)}
-                          className="rounded border border-slate-700 px-2 py-1 text-xs text-slate-300 hover:border-slate-500 hover:text-white"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteComment(comment.id)}
-                          className="rounded border border-red-500 px-2 py-1 text-xs text-red-300 hover:border-red-400 hover:text-red-200"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </header>
+                <TerraCard key={comment.id} title={`Posted ${formatDate(comment.created_at)}`}>
                   {isEditing ? (
-                    <form onSubmit={handleUpdateComment} className="space-y-3">
-                      <textarea
+                    <form onSubmit={handleUpdateComment} className="flex flex-col gap-3">
+                      <TerraTextarea
                         value={editingCommentBody}
                         onChange={(event) => setEditingCommentBody(event.target.value)}
-                        className="min-h-[60px] w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white outline-none focus:border-brand focus:ring-2 focus:ring-brand/40"
+                        className="min-h-[90px]"
+                        maxLength={1000}
                       />
-                      <div className="flex justify-end gap-2">
-                        <button
+                      <div className="flex gap-2">
+                        <TerraButton type="submit" size="sm">
+                          Save
+                        </TerraButton>
+                        <TerraButton
                           type="button"
-                          onClick={() => {
-                            setEditingCommentId(null);
-                            setEditingCommentBody("");
-                          }}
-                          className="rounded border border-slate-700 px-3 py-1 text-xs text-slate-300 hover:border-slate-500 hover:text-white"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => startEditingComment("", "")}
                         >
                           Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          disabled={updateCommentMutation.isPending || !editingCommentBody.trim()}
-                          className="rounded bg-brand px-3 py-1 text-xs font-semibold text-brand-foreground shadow hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-60"
-                        >
-                          {updateCommentMutation.isPending ? "Saving…" : "Save"}
-                        </button>
+                        </TerraButton>
                       </div>
                     </form>
                   ) : (
-                    <p className="whitespace-pre-wrap text-sm text-slate-200">{comment.body}</p>
+                    <p className="text-body-sm text-ink-700">{comment.body}</p>
                   )}
-                </article>
+
+                  {isAuthor ? (
+                    <div className="mt-4 flex gap-3">
+                      <TerraButton
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => startEditingComment(comment.id, comment.body)}
+                      >
+                        Edit
+                      </TerraButton>
+                      <TerraButton
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeleteComment(comment.id)}
+                      >
+                        Delete
+                      </TerraButton>
+                    </div>
+                  ) : null}
+                </TerraCard>
               );
             })
           )}
         </div>
-      </section>
+      </TerraLedgerSection>
     </section>
   );
 }
