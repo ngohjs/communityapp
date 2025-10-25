@@ -1,7 +1,16 @@
 import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
-import { TerraCard, TerraField, TerraLedgerSection, terraButtonClass } from "@/components/ui/terra";
+import {
+  TerraBadge,
+  TerraButton,
+  TerraCard,
+  TerraField,
+  TerraInput,
+  TerraLedgerSection,
+  TerraSelect,
+  terraButtonClass
+} from "@/components/ui/terra";
 import { CONTENT_PAGE_SIZE, useContentCategories, useContentLibrary } from "@/hooks/useContentLibrary";
 import { ContentSummary } from "@/lib/api/content";
 
@@ -39,9 +48,7 @@ function ContentCard({ item, categoryName }: { item: ContentSummary; categoryNam
             <h3 className="font-heading text-display-md text-ink-900">{item.title}</h3>
             <p className="text-body-sm text-ink-500">Published {formatDate(item.published_at)}</p>
           </div>
-          <span className="terra-badge bg-[rgba(46,59,69,0.12)] text-ink-700">
-            {item.file_type.toUpperCase()}
-          </span>
+          <TerraBadge tone="neutral">{item.file_type.toUpperCase()}</TerraBadge>
         </div>
         {item.description ? (
           <p className="text-body-sm text-ink-700 line-clamp-3">{item.description}</p>
@@ -68,7 +75,10 @@ function ContentCard({ item, categoryName }: { item: ContentSummary; categoryNam
         </dl>
       </div>
       <div className="flex items-center justify-between">
-        <Link to={`/content/${item.id}`} className={terraButtonClass("ghost") + " text-sm"}>
+        <Link
+          to={`/content/${item.id}`}
+          className={terraButtonClass({ variant: "ghost", size: "sm" })}
+        >
           View details
         </Link>
       </div>
@@ -138,23 +148,22 @@ export default function LibraryPage() {
         </p>
       </header>
 
-      <TerraCard title="Refine results" eyebrow={<span className="terra-badge">Filters</span>}>
+      <TerraCard title="Refine results" eyebrow={<TerraBadge tone="success">Filters</TerraBadge>}>
         <form onSubmit={handleSearchSubmit} className="grid gap-5 md:grid-cols-4">
           <div className="md:col-span-2">
-            <TerraField label="Keyword" htmlFor="search" hint="Search by title or description">
-              <input
+            <TerraField label="Keyword" htmlFor="search" supportingText="Search by title or description">
+              <TerraInput
                 id="search"
                 name="search"
                 value={searchInput}
                 onChange={(event) => setSearchInput(event.target.value)}
                 placeholder="Search by title or description"
-                className="terra-input"
               />
             </TerraField>
           </div>
 
           <TerraField label="Category">
-            <select
+            <TerraSelect
               value={filters.categoryId ?? ""}
               onChange={(event) => {
                 const value = event.target.value || undefined;
@@ -167,7 +176,6 @@ export default function LibraryPage() {
                 next.delete("page");
                 setSearchParams(next, { replace: true });
               }}
-              className="terra-select"
             >
               <option value="">All categories</option>
               {categoriesQuery.data?.items.map((category) => (
@@ -175,11 +183,11 @@ export default function LibraryPage() {
                   {category.name}
                 </option>
               ))}
-            </select>
+            </TerraSelect>
           </TerraField>
 
           <TerraField label="File type">
-            <select
+            <TerraSelect
               value={filters.contentType ?? ""}
               onChange={(event) => {
                 const value = event.target.value || undefined;
@@ -192,19 +200,18 @@ export default function LibraryPage() {
                 next.delete("page");
                 setSearchParams(next, { replace: true });
               }}
-              className="terra-select"
             >
               {FILE_TYPE_OPTIONS.map((option) => (
                 <option key={option.value || "all"} value={option.value}>
                   {option.label}
                 </option>
               ))}
-            </select>
-          </TerraField>
+            </TerraSelect>
+            </TerraField>
 
           <div className="md:col-span-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <TerraField label="Uploaded after">
-              <input
+              <TerraInput
                 type="date"
                 value={filters.uploadedAfter ?? ""}
                 onChange={(event) => {
@@ -218,11 +225,10 @@ export default function LibraryPage() {
                   next.delete("page");
                   setSearchParams(next, { replace: true });
                 }}
-                className="terra-input terra-date"
               />
             </TerraField>
             <TerraField label="Uploaded before">
-              <input
+              <TerraInput
                 type="date"
                 value={filters.uploadedBefore ?? ""}
                 onChange={(event) => {
@@ -236,18 +242,17 @@ export default function LibraryPage() {
                   next.delete("page");
                   setSearchParams(next, { replace: true });
                 }}
-                className="terra-input terra-date"
               />
             </TerraField>
           </div>
 
           <div className="flex items-end justify-end gap-3 md:col-span-2">
-            <button type="button" onClick={resetFilters} className={terraButtonClass("ghost")}>
+            <TerraButton type="button" variant="ghost" onClick={resetFilters}>
               Reset
-            </button>
-            <button type="submit" className={terraButtonClass("primary")}>
+            </TerraButton>
+            <TerraButton type="submit" variant="primary" isLoading={isFetching}>
               Apply filters
-            </button>
+            </TerraButton>
           </div>
         </form>
       </TerraCard>
@@ -261,25 +266,27 @@ export default function LibraryPage() {
           <div className="flex items-center justify-between text-body-sm text-ink-600">
             <span>{isFetching ? "Refreshing results…" : `${totalRecords} items found`}</span>
             <div className="flex items-center gap-2">
-              <button
+              <TerraButton
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => setPage(Math.max(1, pageParam - 1))}
                 disabled={pageParam <= 1}
-                className={terraButtonClass("ghost") + " px-4 py-2 text-xs"}
               >
                 Previous
-              </button>
+              </TerraButton>
               <span className="text-data-xs text-ink-500 uppercase tracking-[0.18em]">
                 Page {pageParam} of {totalPages}
               </span>
-              <button
+              <TerraButton
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => setPage(Math.min(totalPages, pageParam + 1))}
                 disabled={pageParam >= totalPages}
-                className={terraButtonClass("ghost") + " px-4 py-2 text-xs"}
               >
                 Next
-              </button>
+              </TerraButton>
             </div>
           </div>
 
@@ -293,7 +300,7 @@ export default function LibraryPage() {
               <p className="mt-2 text-body-sm text-ink-500">
                 Admins can upload new resources from the admin dashboard.
               </p>
-              <Link to="/admin/content" className={terraButtonClass("primary") + " mt-4 inline-flex text-xs"}>
+              <Link to="/admin/content" className={terraButtonClass({ variant: "primary", size: "sm" }) + " mt-4 inline-flex"}>
                 Go to admin content dashboard
               </Link>
             </div>
