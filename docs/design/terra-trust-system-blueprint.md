@@ -78,3 +78,7 @@
 2. Stand up shared Storybook environment; bootstrap token JSON and design token pipeline.
 3. Assign component owners per phase and begin documenting interaction/state diagrams alongside implementation.
 
+---
+
+### Progress Log
+- **2024-10-24** – Phase 1 initiated: primitive + semantic tokens encoded in CSS variables, Tailwind theme consumes new tokens, Work Sans data font added to baseline typography stack, dark-mode scaffolding in place.

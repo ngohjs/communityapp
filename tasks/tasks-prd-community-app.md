@@ -179,7 +179,7 @@
 - [x] 9.4 Add health check endpoint/tests, structured logging config, and placeholders for monitoring/metrics.
 
 - [ ] 10.0 Terra Trust Design System Elevation *(see `docs/design/terra-trust-system-blueprint.md`)*
-  - [ ] 10.1 Token Expansion — deliver primitive and semantic token sets (color, type, space, elevation, motion, density, dark mode) and wire them through CSS variables + Tailwind theme.
+  - [ ] 10.1 Token Expansion — deliver primitive and semantic token sets (color, type, space, elevation, motion, density, dark mode) and wire them through CSS variables + Tailwind theme. *(in progress)*
   - [ ] 10.2 Component Library — implement button, form controls, feedback, navigation, layout primitives with full state matrices and Storybook documentation.
   - [ ] 10.3 Motion & Feedback — codify duration/easing tokens, keyframe library, reduced motion handling, and apply choreography to overlays, nav, KPI, and notifications.
   - [ ] 10.4 Accessibility & Quality — focus strategy, skip links, aria instrumentation, automated axe checks, contrast audits with tokenized pairings.
