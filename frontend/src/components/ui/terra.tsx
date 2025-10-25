@@ -1,6 +1,21 @@
-import { ReactNode, ButtonHTMLAttributes, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ReactNode,
+  ButtonHTMLAttributes,
+  InputHTMLAttributes,
+  SelectHTMLAttributes,
+  TextareaHTMLAttributes,
+  forwardRef,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
 
-const cx = (...classes: Array<string | false | null | undefined>) => classes.filter(Boolean).join(" ");
+const cx = (...classes: Array<string | string[] | false | null | undefined>) =>
+  classes
+    .flatMap((value) => (Array.isArray(value) ? value : [value]))
+    .filter(Boolean)
+    .join(" ");
 
 type TerraCardProps = {
   title?: string;
@@ -18,7 +33,7 @@ export function TerraCard({ title, eyebrow, action, footer, children, className 
         {(title || eyebrow || action) && (
           <header className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              {eyebrow ? <div className="terra-badge">{eyebrow}</div> : null}
+              {eyebrow ? <div className="terra-card-eyebrow">{eyebrow}</div> : null}
               {title ? (
                 <h2 className="text-ink-900 text-display-md font-heading sm:text-display-lg">
                   {title}
@@ -35,49 +50,134 @@ export function TerraCard({ title, eyebrow, action, footer, children, className 
   );
 }
 
+type TerraButtonVariant = "primary" | "secondary" | "ghost" | "destructive" | "tonal" | "link";
+type TerraButtonSize = "sm" | "md" | "lg";
+
 type TerraButtonProps = {
-  variant?: "primary" | "ghost";
+  variant?: TerraButtonVariant;
+  size?: TerraButtonSize;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
   icon?: ReactNode;
-  children: ReactNode;
+  isLoading?: boolean;
+  loadingText?: string;
+  fullWidth?: boolean;
+  iconOnly?: boolean;
+  children?: ReactNode;
   className?: string;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
-export function TerraButton({ variant = "primary", icon, children, className, ...rest }: TerraButtonProps) {
+export function TerraButton({
+  variant = "primary",
+  size = "md",
+  leftIcon,
+  rightIcon,
+  icon,
+  isLoading = false,
+  loadingText,
+  fullWidth,
+  iconOnly,
+  children,
+  className,
+  disabled,
+  type: typeAttr = "button",
+  ...rest
+}: TerraButtonProps) {
+  const resolvedIconOnly = iconOnly ?? (!children && !!(leftIcon ?? rightIcon ?? icon));
+  const contentLabel = isLoading && loadingText ? loadingText : children;
+  const leadingIcon = isLoading ? <TerraSpinner className="terra-btn__spinner" /> : leftIcon ?? icon ?? null;
+  const trailingIcon = isLoading ? null : rightIcon ?? null;
+  const ariaBusy = isLoading ? true : undefined;
+
   return (
     <button
+      type="button"
       className={cx(
-        terraButtonClass(variant),
-        icon ? "gap-2" : "",
+        terraButtonClass({ variant, size, fullWidth, iconOnly: resolvedIconOnly }),
         className
       )}
+      aria-busy={ariaBusy}
+      disabled={disabled || isLoading}
+      type={typeAttr}
       {...rest}
     >
-      {icon ? <span className="text-base">{icon}</span> : null}
-      <span>{children}</span>
+      <span className="terra-btn__inner">
+        {leadingIcon ? <span className="terra-btn__icon" aria-hidden="true">{leadingIcon}</span> : null}
+        {contentLabel ? <span className="terra-btn__label">{contentLabel}</span> : null}
+        {trailingIcon ? <span className="terra-btn__icon" aria-hidden="true">{trailingIcon}</span> : null}
+      </span>
     </button>
   );
 }
 
-export const terraButtonClass = (variant: "primary" | "ghost" = "primary") =>
-  cx("terra-btn", variant === "primary" ? "terra-btn-primary" : "terra-btn-ghost");
+type TerraButtonClassOptions = {
+  variant?: TerraButtonVariant;
+  size?: TerraButtonSize;
+  fullWidth?: boolean;
+  iconOnly?: boolean;
+};
+
+const buttonVariantClassMap: Record<TerraButtonVariant, string[]> = {
+  primary: ["terra-btn--primary", "terra-btn-primary"],
+  secondary: ["terra-btn--secondary"],
+  ghost: ["terra-btn--ghost", "terra-btn-ghost"],
+  destructive: ["terra-btn--destructive"],
+  tonal: ["terra-btn--tonal"],
+  link: ["terra-btn--link"]
+};
+
+const buttonSizeClassMap: Record<TerraButtonSize, string> = {
+  sm: "terra-btn--sm",
+  md: "",
+  lg: "terra-btn--lg"
+};
+
+export const terraButtonClass = (
+  variantOrOptions: TerraButtonVariant | TerraButtonClassOptions = "primary",
+  sizeOverride?: TerraButtonSize
+) => {
+  const options =
+    typeof variantOrOptions === "string"
+      ? ({ variant: variantOrOptions, size: sizeOverride } satisfies TerraButtonClassOptions)
+      : variantOrOptions;
+
+  const variant = options.variant ?? "primary";
+  const size = options.size ?? "md";
+
+  return cx(
+    "terra-btn",
+    buttonVariantClassMap[variant],
+    buttonSizeClassMap[size],
+    options.fullWidth ? "terra-btn--full" : "",
+    options.iconOnly ? "terra-btn--icon" : ""
+  );
+};
+
+function TerraSpinner({ className }: { className?: string }) {
+  return <span className={cx("terra-spinner", className)} aria-hidden="true" />;
+}
 
 type TerraAlertProps = {
-  tone?: "danger" | "warning" | "info";
+  tone?: "danger" | "warning" | "info" | "success";
   title?: string;
   children: ReactNode;
   className?: string;
 };
 
 export function TerraAlert({ tone = "info", title, children, className }: TerraAlertProps) {
-  const toneClass =
+  const toneClass = cx(
+    "terra-alert",
     tone === "danger"
-      ? "terra-alert terra-alert--danger"
+      ? "terra-alert--danger"
       : tone === "warning"
-        ? "terra-alert terra-alert--warning"
-        : "terra-alert terra-alert--info";
+        ? "terra-alert--warning"
+        : tone === "success"
+          ? "terra-alert--success"
+          : "terra-alert--info"
+  );
 
   return (
-    <div className={cx(toneClass, className)}>
+    <div className={cx(toneClass, className)} role={tone === "danger" ? "alert" : undefined}>
       <div>
         {title ? <p className="font-heading text-display-md mb-1">{title}</p> : null}
         <div className="text-body-sm leading-relaxed">{children}</div>
@@ -87,19 +187,45 @@ export function TerraAlert({ tone = "info", title, children, className }: TerraA
 }
 
 type TerraFieldProps = {
-  label: string;
+  label: ReactNode;
   htmlFor?: string;
+  supportingText?: string;
   hint?: string;
+  validationText?: string;
+  status?: "default" | "error" | "success";
+  required?: boolean;
   children: ReactNode;
   className?: string;
 };
 
-export function TerraField({ label, htmlFor, hint, children, className }: TerraFieldProps) {
+export function TerraField({
+  label,
+  htmlFor,
+  supportingText,
+  hint,
+  validationText,
+  status = "default",
+  required = false,
+  children,
+  className
+}: TerraFieldProps) {
+  const helper = supportingText ?? hint ?? null;
+  const hasStatus = status !== "default";
   return (
-    <label className={cx("flex flex-col gap-2", className)} htmlFor={htmlFor}>
-      <span className="terra-field-label">{label}</span>
+    <label
+      className={cx("terra-field", className)}
+      htmlFor={htmlFor}
+      data-status={hasStatus ? status : undefined}
+    >
+      <div className="terra-field-header">
+        <span className="terra-field-label">
+          {label}
+          {required ? <span className="terra-field-required" aria-hidden="true">*</span> : null}
+        </span>
+      </div>
       {children}
-      {hint ? <span className="text-body-sm text-ink-300">{hint}</span> : null}
+      {helper ? <span className="terra-field-supporting">{helper}</span> : null}
+      {validationText ? <span className="terra-field-validation">{validationText}</span> : null}
     </label>
   );
 }
@@ -118,6 +244,7 @@ export function TerraToggle({ pressed, onPressedChange, disabled, label }: Terra
       className="terra-toggle"
       onClick={onPressedChange}
       aria-pressed={pressed}
+      aria-label={label}
       disabled={disabled}
     >
       <span className="sr-only">{label}</span>
@@ -126,28 +253,47 @@ export function TerraToggle({ pressed, onPressedChange, disabled, label }: Terra
 }
 
 type TerraBadgeProps = {
-  tone?: "success" | "neutral" | "warning";
+  tone?: "success" | "neutral" | "warning" | "danger" | "info";
   children: ReactNode;
   className?: string;
 };
 
 export function TerraBadge({ tone = "neutral", children, className }: TerraBadgeProps) {
-  const toneClass = useMemo(() => {
-    if (tone === "success") {
-      return "bg-[rgba(106,169,127,0.12)] text-[var(--terra-accent-verdant)]";
-    }
-    if (tone === "warning") {
-      return "bg-[rgba(180,106,85,0.12)] text-[var(--terra-accent-clay)]";
-    }
-    return "bg-[rgba(46,59,69,0.08)] text-[var(--terra-ink-700)]";
-  }, [tone]);
-
   return (
-    <span className={cx("terra-badge", toneClass, className)}>
+    <span className={cx("terra-badge", className)} data-tone={tone}>
       <span>{children}</span>
     </span>
   );
 }
+
+type TerraInputProps = InputHTMLAttributes<HTMLInputElement>;
+type TerraSelectProps = SelectHTMLAttributes<HTMLSelectElement>;
+type TerraTextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement>;
+
+export const TerraInput = forwardRef<HTMLInputElement, TerraInputProps>(function TerraInput(
+  { className, type = "text", ...rest },
+  ref
+) {
+  return <input ref={ref} type={type} className={cx("terra-input", className)} {...rest} />;
+});
+
+export const TerraSelect = forwardRef<HTMLSelectElement, TerraSelectProps>(function TerraSelect(
+  { className, children, ...rest },
+  ref
+) {
+  return (
+    <select ref={ref} className={cx("terra-select", className)} {...rest}>
+      {children}
+    </select>
+  );
+});
+
+export const TerraTextarea = forwardRef<HTMLTextAreaElement, TerraTextareaProps>(function TerraTextarea(
+  { className, ...rest },
+  ref
+) {
+  return <textarea ref={ref} className={cx("terra-textarea", className)} {...rest} />;
+});
 
 type TerraKPIProps = {
   label: string;

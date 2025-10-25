@@ -82,3 +82,4 @@
 
 ### Progress Log
 - **2024-10-24** – Phase 1 initiated: primitive + semantic tokens encoded in CSS variables, Tailwind theme consumes new tokens, Work Sans data font added to baseline typography stack, dark-mode scaffolding gated behind `data-theme="dark"` for future opt-in.
+- **2024-10-25** – Phase 2 underway: button system gains size/variant matrix, loading states, full-width + icon plumbing; badges/toggles updated; field scaffolding now supports statuses, helper/validation copy, and forwardRef input primitives.

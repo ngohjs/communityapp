@@ -308,8 +308,7 @@
   .terra-input,
   .terra-select,
   .terra-textarea,
-  .terra-date,
-  .terra-field {
+  .terra-date {
     width: 100%;
     border-radius: var(--radius-lg);
     border: 1px solid var(--terra-border-soft);
@@ -338,10 +337,28 @@
   .terra-select:focus,
   .terra-textarea:focus,
   .terra-date:focus,
-  .terra-field:focus {
+  .terra-field:focus-within .terra-input,
+  .terra-field:focus-within .terra-select,
+  .terra-field:focus-within .terra-textarea,
+  .terra-field:focus-within .terra-date {
     border-color: var(--terra-border-focus);
     box-shadow: var(--terra-focus-shadow);
     outline: none;
+  }
+
+  .terra-input::placeholder,
+  .terra-textarea::placeholder {
+    color: var(--terra-text-subtle);
+    opacity: 0.8;
+  }
+
+  .terra-input:disabled,
+  .terra-select:disabled,
+  .terra-textarea:disabled {
+    background: var(--terra-background-subtle);
+    color: var(--terra-text-subtle);
+    cursor: not-allowed;
+    opacity: 0.8;
   }
 
   .terra-toggle {
@@ -423,40 +440,200 @@
     gap: 1.5rem;
   }
 
+  .terra-card-eyebrow {
+    display: inline-flex;
+  }
+
   .terra-btn {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 999px;
+    gap: var(--space-2);
+    border-radius: var(--radius-pill);
     font-weight: 600;
     letter-spacing: 0.01em;
-    padding: 0.75rem 1.5rem;
-    transition: transform var(--motion-duration-snappy) var(--motion-ease-standard),
-      box-shadow var(--motion-duration-snappy) var(--motion-ease-standard),
-      background var(--motion-duration-snappy) var(--motion-ease-standard);
+    padding: var(--space-3) var(--space-5);
     border: 1px solid transparent;
+    font-size: 0.95rem;
+    line-height: 1.3;
+    transition:
+      transform var(--motion-duration-snappy) var(--motion-ease-standard),
+      box-shadow var(--motion-duration-snappy) var(--motion-ease-standard),
+      background var(--motion-duration-snappy) var(--motion-ease-standard),
+      color var(--motion-duration-snappy) var(--motion-ease-standard);
   }
 
+  .terra-btn--sm {
+    padding: var(--space-2-5) var(--space-4);
+    font-size: 0.85rem;
+  }
+
+  .terra-btn--lg {
+    padding: var(--space-3-5) var(--space-6);
+    font-size: 1rem;
+  }
+
+  .terra-btn--full {
+    width: 100%;
+  }
+
+  .terra-btn--icon {
+    padding: var(--space-2-5);
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .terra-btn--primary,
   .terra-btn-primary {
     background: var(--terra-action-primary-bg);
     color: var(--terra-action-primary-text);
     box-shadow: var(--shadow-level-2);
   }
 
+  .terra-btn--primary:hover,
   .terra-btn-primary:hover {
     transform: translateY(-1px);
     background: var(--terra-action-primary-bg-hover);
     box-shadow: 0 18px 32px -22px rgba(180, 106, 85, 0.72);
   }
 
-  .terra-btn-ghost {
-    border-color: var(--terra-action-ghost-border);
+  .terra-btn--secondary {
     background: var(--terra-action-secondary-bg);
     color: var(--terra-action-secondary-text);
+    border-color: var(--terra-action-ghost-border);
+    box-shadow: var(--shadow-level-1);
   }
 
-  .terra-btn-ghost:hover {
+  .terra-btn--secondary:hover {
     background: var(--terra-action-secondary-bg-hover);
+  }
+
+  .terra-btn--ghost,
+  .terra-btn-ghost {
+    background: transparent;
+    border-color: var(--terra-action-ghost-border);
+    color: var(--terra-text-body);
+  }
+
+  .terra-btn--ghost:hover,
+  .terra-btn-ghost:hover {
+    background: rgba(230, 236, 241, 0.35);
+  }
+
+  .terra-btn--tonal {
+    background: rgba(180, 106, 85, 0.12);
+    color: var(--terra-action-primary-bg);
+  }
+
+  .terra-btn--tonal:hover {
+    background: rgba(180, 106, 85, 0.18);
+  }
+
+  .terra-btn--destructive {
+    background: var(--color-crimson-500);
+    color: var(--terra-text-inverse);
+    box-shadow: var(--shadow-level-2);
+  }
+
+  .terra-btn--destructive:hover {
+    background: var(--color-crimson-600);
+  }
+
+  .terra-btn--link {
+    background: transparent;
+    color: var(--terra-action-primary-bg);
+    padding-inline: var(--space-2);
+    padding-block: var(--space-1-5);
+  }
+
+  .terra-btn--link:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .terra-btn:disabled {
+    opacity: 0.65;
+    pointer-events: none;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .terra-btn[aria-busy="true"] {
+    cursor: progress;
+  }
+
+  .terra-btn__inner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+  }
+
+  .terra-btn__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .terra-btn__spinner {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .terra-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .terra-field-header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    justify-content: space-between;
+  }
+
+  .terra-field-required {
+    margin-left: 0.25rem;
+    font-size: 0.8rem;
+    color: var(--color-crimson-500);
+  }
+
+  .terra-field-supporting {
+    font-size: 0.85rem;
+    color: var(--terra-text-muted);
+  }
+
+  .terra-field-validation {
+    font-size: 0.85rem;
+    color: var(--terra-text-danger);
+  }
+
+  .terra-field[data-status="success"] .terra-field-validation {
+    color: var(--terra-text-positive);
+  }
+
+  .terra-field[data-status="error"] .terra-field-validation {
+    color: var(--terra-text-danger);
+  }
+
+  .terra-field[data-status="success"] .terra-input,
+  .terra-field[data-status="success"] .terra-select,
+  .terra-field[data-status="success"] .terra-textarea,
+  .terra-field[data-status="success"] .terra-date {
+    border-color: rgba(106, 169, 127, 0.6);
+    box-shadow: 0 0 0 3px rgba(106, 169, 127, 0.18);
+  }
+
+  .terra-field[data-status="error"] .terra-input,
+  .terra-field[data-status="error"] .terra-select,
+  .terra-field[data-status="error"] .terra-textarea,
+  .terra-field[data-status="error"] .terra-date {
+    border-color: var(--terra-border-danger);
+    box-shadow: 0 0 0 3px rgba(220, 87, 94, 0.12);
   }
 
   .terra-badge {
@@ -464,13 +641,38 @@
     align-items: center;
     gap: 0.4rem;
     padding: 0.35rem 0.75rem;
-    border-radius: 999px;
-    background: var(--terra-status-success-bg);
-    color: var(--color-verdant-600);
+    border-radius: var(--radius-pill);
     font-size: 0.75rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     font-weight: 600;
+    background: rgba(106, 169, 127, 0.12);
+    color: var(--color-verdant-600);
+  }
+
+  .terra-badge[data-tone="neutral"] {
+    background: rgba(46, 59, 69, 0.08);
+    color: var(--terra-text-body);
+  }
+
+  .terra-badge[data-tone="success"] {
+    background: rgba(106, 169, 127, 0.12);
+    color: var(--color-verdant-600);
+  }
+
+  .terra-badge[data-tone="warning"] {
+    background: rgba(242, 176, 95, 0.18);
+    color: var(--color-amber-600);
+  }
+
+  .terra-badge[data-tone="danger"] {
+    background: rgba(220, 87, 94, 0.14);
+    color: var(--color-crimson-600);
+  }
+
+  .terra-badge[data-tone="info"] {
+    background: rgba(73, 145, 193, 0.16);
+    color: var(--color-sky-500);
   }
 
   .terra-ledger-section {
@@ -517,6 +719,12 @@
     color: #7b4b14;
   }
 
+  .terra-alert--success {
+    background: var(--terra-status-success-bg);
+    border-color: rgba(106, 169, 127, 0.38);
+    color: var(--terra-text-positive);
+  }
+
   .terra-alert--info {
     background: var(--terra-status-info-bg);
     border-color: var(--terra-status-info-border);
@@ -543,10 +751,26 @@
     line-height: 2.75rem;
     color: var(--terra-text-strong);
   }
+
+  .terra-spinner {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    animation: terra-spin 640ms linear infinite;
+  }
 }
 
 @layer utilities {
   .bg-ledger-gradient {
     background-image: linear-gradient(135deg, rgba(229, 235, 240, 0.95), rgba(255, 255, 255, 0.75));
+  }
+}
+
+@keyframes terra-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
