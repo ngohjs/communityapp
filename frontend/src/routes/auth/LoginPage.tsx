@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
+import { TerraAlert, TerraCard, TerraField, terraButtonClass } from "@/components/ui/terra";
 import { toApiError } from "@/lib/api/client";
 import { useAuth } from "@/providers/AuthProvider";
 
@@ -52,25 +53,21 @@ function LoginPage() {
     }
   }, [mutation.data]);
 
-  const error =
-    mutation.error ? toApiError(mutation.error).message : lastError ? lastError : null;
+  const error = mutation.error ? toApiError(mutation.error).message : lastError ? lastError : null;
 
   return (
-    <section className="flex flex-col gap-8 rounded-3xl border border-slate-800 bg-slate-900/60 p-10 shadow-xl shadow-indigo-500/10">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-semibold text-white">Log in</h1>
-        <p className="text-sm text-slate-400">
-          Enter your email and password to access the Community App. Need an account?{" "}
-          <Link to="/auth/register" className="font-semibold text-brand">
-            Register instead
-          </Link>
-          .
-        </p>
-      </header>
-
+    <TerraCard
+      title="Log in"
+      eyebrow={<span className="terra-badge">Member access</span>}
+      action={
+        <span className="text-body-sm text-ink-500">
+          Need an account? <Link to="/auth/register" className="text-accent-verdant underline-offset-4">Register instead</Link>
+        </span>
+      }
+      className="max-w-2xl"
+    >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <label className="flex flex-col gap-2 text-sm">
-          <span className="text-slate-300">Email address</span>
+        <TerraField label="Email address">
           <input
             type="email"
             name="email"
@@ -78,12 +75,11 @@ function LoginPage() {
             onChange={(event) => setValues((prev) => ({ ...prev, email: event.target.value }))}
             required
             autoComplete="email"
-            className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/40"
+            className="terra-input"
           />
-        </label>
+        </TerraField>
 
-        <label className="flex flex-col gap-2 text-sm">
-          <span className="text-slate-300">Password</span>
+        <TerraField label="Password">
           <input
             type="password"
             name="password"
@@ -91,41 +87,37 @@ function LoginPage() {
             onChange={(event) => setValues((prev) => ({ ...prev, password: event.target.value }))}
             required
             autoComplete="current-password"
-            className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/40"
+            className="terra-input"
           />
-        </label>
+        </TerraField>
 
-        <div className="flex items-center justify-between text-sm">
-          <Link to="/auth/forgot-password" className="text-brand hover:text-indigo-300">
+        <div className="flex items-center justify-between text-body-sm">
+          <Link to="/auth/forgot-password" className="text-accent-verdant hover:underline">
             Forgot your password?
           </Link>
         </div>
 
-        <button
-          type="submit"
-          disabled={mutation.isPending}
-          className="mt-2 inline-flex items-center justify-center rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-brand-foreground shadow-lg transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-70"
-        >
-          {mutation.isPending ? "Signing in…" : "Sign in"}
-        </button>
+        <div className="flex justify-end">
+          <button type="submit" disabled={mutation.isPending} className={terraButtonClass("primary")}>
+            {mutation.isPending ? "Signing in…" : "Sign in"}
+          </button>
+        </div>
       </form>
 
       {error ? (
-        <p className="rounded-md border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+        <TerraAlert tone="danger" title="Authentication failed">
           {error}
-        </p>
+        </TerraAlert>
       ) : null}
 
       {mutation.data ? (
-        <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-5 py-4 text-sm text-emerald-200">
-          <p className="font-semibold text-emerald-100">{authMessage}</p>
-          <p className="mt-1 text-emerald-200/80">
-            Your session is active and the refresh token cookie is set. You can continue browsing protected
-            areas without re-authenticating.
-          </p>
-        </div>
+        <TerraAlert tone="info" title="Success">
+          {authMessage}
+          <br />
+          Your session is active. You can continue browsing protected areas without re-authenticating.
+        </TerraAlert>
       ) : null}
-    </section>
+    </TerraCard>
   );
 }
 

@@ -2,6 +2,7 @@ import { FormEvent, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 
+import { TerraAlert, TerraCard, TerraField, terraButtonClass } from "@/components/ui/terra";
 import { apiClient, toApiError } from "@/lib/api/client";
 
 type ResetPasswordPayload = {
@@ -40,34 +41,32 @@ function ResetPasswordPage() {
     mutation.mutate({ token, new_password: password });
   };
 
-  const error =
-    validationError ?? (mutation.error ? toApiError(mutation.error).message : null);
+  const error = validationError ?? (mutation.error ? toApiError(mutation.error).message : null);
 
   return (
-    <section className="flex flex-col gap-6 rounded-3xl border border-slate-800 bg-slate-900/60 p-10 shadow-xl shadow-indigo-500/10">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-semibold text-white">Reset password</h1>
-        <p className="text-sm text-slate-400">
-          Paste the reset token from the password recovery email and choose your new password. Tokens are valid
-          for 30 minutes and expire after first use.
-        </p>
-      </header>
+    <TerraCard
+      title="Reset password"
+      eyebrow={<span className="terra-badge">Security</span>}
+      action={<span className="text-body-sm text-ink-500">Tokens expire after 30 minutes</span>}
+      className="max-w-3xl"
+    >
+      <p className="text-body-sm text-ink-600">
+        Paste the reset token from the password recovery email and choose your new password. Tokens are valid for 30 minutes and expire after first use.
+      </p>
 
       <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2 md:gap-6">
-        <label className="flex flex-col gap-2 text-sm md:col-span-2">
-          <span className="text-slate-300">Reset token</span>
+        <TerraField label="Reset token" className="md:col-span-2">
           <input
             type="text"
             name="token"
             value={token}
             onChange={(event) => setToken(event.target.value)}
             required
-            className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/40"
+            className="terra-input"
           />
-        </label>
+        </TerraField>
 
-        <label className="flex flex-col gap-2 text-sm">
-          <span className="text-slate-300">New password</span>
+        <TerraField label="New password">
           <input
             type="password"
             name="password"
@@ -76,12 +75,11 @@ function ResetPasswordPage() {
             required
             minLength={8}
             autoComplete="new-password"
-            className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/40"
+            className="terra-input"
           />
-        </label>
+        </TerraField>
 
-        <label className="flex flex-col gap-2 text-sm">
-          <span className="text-slate-300">Confirm password</span>
+        <TerraField label="Confirm password">
           <input
             type="password"
             name="confirm_password"
@@ -90,34 +88,31 @@ function ResetPasswordPage() {
             required
             minLength={8}
             autoComplete="new-password"
-            className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/40"
+            className="terra-input"
           />
-        </label>
+        </TerraField>
 
-        <button
-          type="submit"
-          disabled={mutation.isPending}
-          className="md:col-span-2 inline-flex items-center justify-center rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-brand-foreground shadow-lg transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-70"
-        >
-          {mutation.isPending ? "Resetting password…" : "Reset password"}
-        </button>
+        <div className="md:col-span-2 flex justify-end">
+          <button type="submit" disabled={mutation.isPending} className={terraButtonClass("primary")}>
+            {mutation.isPending ? "Resetting password…" : "Reset password"}
+          </button>
+        </div>
       </form>
 
       {error ? (
-        <p className="rounded-md border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+        <TerraAlert tone="danger" title="Update failed">
           {error}
-        </p>
+        </TerraAlert>
       ) : null}
 
       {mutation.data ? (
-        <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-5 py-4 text-sm text-emerald-200">
-          <p className="font-semibold text-emerald-100">{mutation.data.message}</p>
-          <p className="mt-2 text-emerald-200/70">
-            You can now sign in with your new password. Any outstanding reset tokens have been invalidated.
-          </p>
-        </div>
+        <TerraAlert tone="info" title="Password updated">
+          {mutation.data.message}
+          <br />
+          You can now sign in with your new password. Any outstanding reset tokens have been invalidated.
+        </TerraAlert>
       ) : null}
-    </section>
+    </TerraCard>
   );
 }
 

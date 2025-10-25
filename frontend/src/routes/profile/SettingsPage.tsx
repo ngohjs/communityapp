@@ -5,6 +5,7 @@ import {
   useUpdatePreferencesMutation,
   useUpdatePrivacyMutation
 } from "@/hooks/useProfileQuery";
+import { TerraAlert, TerraCard, TerraLedgerSection, TerraToggle, terraButtonClass } from "@/components/ui/terra";
 import { PrivacyLevel } from "@/lib/api/profile";
 import { toApiError } from "@/lib/api/client";
 
@@ -88,61 +89,66 @@ function SettingsPage() {
   }
 
   return (
-    <section className="flex flex-col gap-8">
-      <header>
-        <h1 className="text-3xl font-semibold text-white">Privacy & Notifications</h1>
-        <p className="mt-2 text-sm text-slate-400">
-          Control who can view your profile and manage how the Community App reaches out to you.
+    <section className="flex flex-col gap-10">
+      <header className="space-y-3">
+        <h1 className="font-heading text-display-xl text-ink-900">Privacy & Notifications</h1>
+        <p className="text-body-lg text-ink-600">
+          Decide who sees your profile, and fine-tune how the Community App keeps your team informed.
         </p>
       </header>
 
       {mutationError ? (
-        <p className="rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+        <TerraAlert tone="danger" title="Action required">
           {mutationError}
-        </p>
+        </TerraAlert>
       ) : null}
 
-      <section className="flex flex-col gap-6 rounded-3xl border border-slate-800 bg-slate-900/60 p-6">
-        <header>
-          <h2 className="text-xl font-semibold text-white">Profile Visibility</h2>
-          <p className="mt-1 text-sm text-slate-400">
-            Choose who can see your profile details. Changes apply immediately.
-          </p>
-        </header>
-
+      <TerraCard title="Profile visibility" eyebrow={<span className="terra-badge">Access control</span>}>
+        <p className="text-body-sm text-ink-600">
+          Choose who can view your profile details. Changes apply immediately.
+        </p>
         <div className="grid gap-4 md:grid-cols-3">
           {PRIVACY_OPTIONS.map((option) => (
             <label
               key={option.value}
-              className="flex cursor-pointer flex-col gap-2 rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition hover:border-slate-600 focus-within:border-brand"
+              className={[
+                "flex cursor-pointer flex-col gap-3 rounded-2xl border p-5 transition",
+                currentPrivacy === option.value
+                  ? "border-[rgba(180,106,85,0.7)] bg-[rgba(180,106,85,0.08)]"
+                  : "border-[rgba(46,59,69,0.12)] bg-surface-raised hover:border-[rgba(46,59,69,0.25)]"
+              ].join(" ")}
             >
               <div className="flex items-start gap-3">
-                <input
-                  type="radio"
-                  name="privacy-level"
-                  value={option.value}
-                  checked={currentPrivacy === option.value}
-                  onChange={handlePrivacyChange}
-                  className="mt-1 h-4 w-4 cursor-pointer accent-brand"
-                />
-                <div>
-                  <p className="text-sm font-semibold text-white">{option.label}</p>
-                  <p className="mt-1 text-xs text-slate-400">{option.description}</p>
+                <span className="mt-1 h-4 w-4 rounded-full border border-[rgba(46,59,69,0.3)]">
+                  <span
+                    className={[
+                      "block h-full w-full rounded-full",
+                      currentPrivacy === option.value ? "bg-[rgba(180,106,85,0.9)]" : "bg-transparent"
+                    ].join(" ")}
+                  />
+                </span>
+                <div className="space-y-1">
+                  <p className="font-heading text-display-md text-ink-900">{option.label}</p>
+                  <p className="text-body-sm text-ink-500">{option.description}</p>
                 </div>
               </div>
+              <input
+                type="radio"
+                name="privacy-level"
+                value={option.value}
+                checked={currentPrivacy === option.value}
+                onChange={handlePrivacyChange}
+                className="sr-only"
+              />
             </label>
           ))}
         </div>
-      </section>
+      </TerraCard>
 
-      <section className="flex flex-col gap-6 rounded-3xl border border-slate-800 bg-slate-900/60 p-6">
-        <header>
-          <h2 className="text-xl font-semibold text-white">Notification Preferences</h2>
-          <p className="mt-1 text-sm text-slate-400">
-            Toggle the types of updates you want to receive from the Community App.
-          </p>
-        </header>
-
+      <TerraLedgerSection
+        title="Notification preferences"
+        description="Toggle the types of updates you want to receive from the Community App."
+      >
         <div className="space-y-4">
           {(Object.keys(PREFERENCE_LABELS) as PreferenceKey[]).map((key) => {
             const { title, description } = PREFERENCE_LABELS[key];
@@ -153,38 +159,29 @@ function SettingsPage() {
             return (
               <div
                 key={key}
-                className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition hover:border-slate-600 sm:flex-row sm:items-center sm:justify-between"
+                className="flex flex-col gap-3 rounded-2xl border border-[rgba(46,59,69,0.14)] bg-surface-raised p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between"
               >
                 <div>
-                  <p className="text-sm font-semibold text-white">{title}</p>
-                  <p className="text-xs text-slate-400">{description}</p>
+                  <p className="font-heading text-display-md text-ink-900">{title}</p>
+                  <p className="text-body-sm text-ink-500">{description}</p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleToggle(key)}
+                <TerraToggle
+                  pressed={enabled}
+                  onPressedChange={() => handleToggle(key)}
                   disabled={isToggling}
-                  className={[
-                    "relative inline-flex h-8 w-16 items-center rounded-full border transition",
-                    enabled
-                      ? "border-brand bg-brand/80"
-                      : "border-slate-700 bg-slate-800",
-                    isToggling ? "opacity-70" : ""
-                  ].join(" ")}
-                  aria-pressed={enabled}
-                >
-                  <span
-                    className={[
-                      "mx-1 inline-block h-6 w-6 transform rounded-full bg-white transition",
-                      enabled ? "translate-x-8" : "translate-x-0"
-                    ].join(" ")}
-                  />
-                  <span className="sr-only">{enabled ? "Disable" : "Enable"} {title}</span>
-                </button>
+                  label={`${enabled ? "Disable" : "Enable"} ${title}`}
+                />
               </div>
             );
           })}
         </div>
-      </section>
+      </TerraLedgerSection>
+
+      <div className="flex justify-end">
+        <button type="button" className={terraButtonClass("ghost")}>
+          Restore defaults
+        </button>
+      </div>
     </section>
   );
 }

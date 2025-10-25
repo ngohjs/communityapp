@@ -1,19 +1,14 @@
 import { Link } from "react-router-dom";
 
+import { TerraAlert, TerraCard, TerraLedgerSection, terraButtonClass } from "@/components/ui/terra";
 import { useProfileQuery } from "@/hooks/useProfileQuery";
 import { resolveAvatarUrl } from "@/lib/api/profile";
 
-function DetailRow({
-  label,
-  value
-}: {
-  label: string;
-  value: string | null | undefined;
-}) {
+function DetailRow({ label, value }: { label: string; value: string | null | undefined }) {
   return (
-    <div className="flex flex-col gap-1 rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-      <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">{label}</span>
-      <span className="text-sm text-slate-100">{value || "—"}</span>
+    <div className="rounded-2xl border border-[rgba(46,59,69,0.12)] bg-surface-raised p-5 shadow-sm">
+      <span className="terra-field-label">{label}</span>
+      <p className="mt-2 text-body-sm text-ink-700">{value || "—"}</p>
     </div>
   );
 }
@@ -22,27 +17,19 @@ function ProfilePage() {
   const { profile, isLoading, errorMessage } = useProfileQuery();
 
   if (isLoading) {
-    return (
-      <section className="rounded-3xl border border-slate-800 bg-slate-900/60 p-10 text-center text-sm text-slate-300">
-        Loading your profile…
-      </section>
-    );
+    return <TerraCard title="Loading">Loading your profile…</TerraCard>;
   }
 
   if (errorMessage) {
     return (
-      <section className="rounded-3xl border border-red-500/30 bg-red-500/10 p-8 text-sm text-red-200">
+      <TerraAlert tone="danger" title="Unable to fetch profile">
         {errorMessage}
-      </section>
+      </TerraAlert>
     );
   }
 
   if (!profile) {
-    return (
-      <section className="rounded-3xl border border-slate-800 bg-slate-900/60 p-10 text-center text-sm text-slate-300">
-        Profile data is not available.
-      </section>
-    );
+    return <TerraAlert tone="warning">Profile data is not available.</TerraAlert>;
   }
 
   const avatarUrl = resolveAvatarUrl(profile.avatar_path);
@@ -51,107 +38,105 @@ function ProfilePage() {
   const notifyAccount = profile.notify_account ?? true;
 
   return (
-    <section className="flex flex-col gap-8">
+    <section className="flex flex-col gap-10">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold text-white">My Profile</h1>
-          <p className="mt-1 text-sm text-slate-400">
-            Review your details and ensure everything is up to date.
-          </p>
+          <h1 className="font-heading text-display-xl text-ink-900">My Profile</h1>
+          <p className="mt-2 text-body-lg text-ink-600">Review your details and ensure everything is up to date.</p>
         </div>
-        <Link
-          to="/profile/edit"
-          className="inline-flex items-center rounded-lg bg-brand px-5 py-2 text-sm font-semibold text-brand-foreground shadow hover:bg-indigo-500"
-        >
+        <Link to="/profile/edit" className={terraButtonClass("primary")}>
           Edit profile
         </Link>
       </header>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="flex flex-col gap-2 rounded-3xl border border-slate-800 bg-slate-900/60 p-5">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Visibility</span>
-            <Link to="/profile/settings" className="text-xs font-semibold text-brand hover:text-indigo-300">
-              Manage
+      <div className="grid gap-6 md:grid-cols-[280px_1fr]">
+        <TerraCard title={`${profile.first_name} ${profile.last_name}`}>
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex h-40 w-40 items-center justify-center overflow-hidden rounded-full border border-[rgba(46,59,69,0.16)] bg-[rgba(46,59,69,0.08)]">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt={`${profile.first_name} avatar`} className="h-full w-full object-cover" />
+              ) : (
+                <span className="text-4xl font-heading text-ink-500">
+                  {(profile.first_name?.[0] ?? "") + (profile.last_name?.[0] ?? "") || "?"}
+                </span>
+              )}
+            </div>
+            <p className="text-body-sm text-ink-500">{profile.email}</p>
+            <Link to="/profile/edit" className={terraButtonClass("ghost") + " text-xs px-4 py-2"}>
+              Update avatar
             </Link>
           </div>
-          <p className="text-sm font-semibold text-white">
-            {profile.privacy_level ? profile.privacy_level.replace(/^\w/, (c) => c.toUpperCase()) : "Private"}
-          </p>
-          <p className="text-xs text-slate-400">
-            Adjust who can view your profile and update notification preferences from the settings page.
-          </p>
-        </div>
+        </TerraCard>
 
-        <div className="flex flex-col gap-2 rounded-3xl border border-slate-800 bg-slate-900/60 p-5">
-          <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Notifications</span>
-          <div className="grid grid-cols-3 gap-2 text-xs text-slate-300">
-            <span className={notifyContent ? "text-emerald-300" : "text-slate-500"}>
-              Content: {notifyContent ? "On" : "Off"}
-            </span>
-            <span className={notifyCommunity ? "text-emerald-300" : "text-slate-500"}>
-              Community: {notifyCommunity ? "On" : "Off"}
-            </span>
-            <span className={notifyAccount ? "text-emerald-300" : "text-slate-500"}>
-              Account: {notifyAccount ? "On" : "Off"}
-            </span>
-          </div>
+        <div className="flex flex-col gap-6">
+          <TerraCard
+            title="Visibility"
+            eyebrow={<span className="terra-badge">Access control</span>}
+            action={<Link to="/profile/settings" className={terraButtonClass("ghost") + " text-xs px-4 py-2"}>Manage</Link>}
+          >
+            <p className="text-body-sm text-ink-600">
+              {profile.privacy_level ? profile.privacy_level.replace(/^\w/, (c) => c.toUpperCase()) : "Private"}
+            </p>
+            <p className="text-body-sm text-ink-500">
+              Adjust who can view your profile and update notification preferences from the settings page.
+            </p>
+          </TerraCard>
+
+          <TerraLedgerSection title="Notification status">
+            <div className="grid gap-3 sm:grid-cols-3">
+              <StatusPill label="Content" enabled={notifyContent} />
+              <StatusPill label="Community" enabled={notifyCommunity} />
+              <StatusPill label="Account" enabled={notifyAccount} />
+            </div>
+          </TerraLedgerSection>
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-[240px_1fr]">
-        <div className="flex flex-col items-center gap-4 rounded-3xl border border-slate-800 bg-slate-900/60 p-6">
-          <div className="flex h-40 w-40 items-center justify-center overflow-hidden rounded-full border border-slate-700 bg-slate-800">
-            {avatarUrl ? (
-              <img src={avatarUrl} alt={`${profile.first_name} avatar`} className="h-full w-full object-cover" />
-            ) : (
-              <span className="text-4xl font-semibold text-slate-500">
-                {(profile.first_name?.[0] ?? "") + (profile.last_name?.[0] ?? "") || "?"}
-              </span>
-            )}
-          </div>
-          <div className="text-center">
-            <p className="text-lg font-semibold text-white">
-              {profile.first_name} {profile.last_name}
-            </p>
-            <p className="text-sm text-slate-400">{profile.email}</p>
-          </div>
-          <Link
-            to="/profile/edit"
-            className="rounded-md border border-slate-700 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-slate-300 hover:border-slate-500 hover:text-white"
-          >
-            Update avatar
-          </Link>
-        </div>
-
+      <TerraLedgerSection title="Profile details">
         <div className="grid gap-4 md:grid-cols-2">
           <DetailRow label="First name" value={profile.first_name} />
           <DetailRow label="Last name" value={profile.last_name} />
           <DetailRow label="Phone" value={profile.phone} />
           <DetailRow label="Location" value={profile.location} />
-
-          <div className="md:col-span-2 flex flex-col gap-2 rounded-xl border border-slate-800 bg-slate-900/60 p-5">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Bio</span>
-            <p className="text-sm leading-relaxed text-slate-100">{profile.bio || "Introduce yourself."}</p>
+          <div className="md:col-span-2 space-y-2">
+            <span className="terra-field-label">Bio</span>
+            <TerraCard title="">
+              <p className="text-body-sm text-ink-700">{profile.bio || "Introduce yourself."}</p>
+            </TerraCard>
           </div>
-
-          <div className="md:col-span-2 flex flex-col gap-2 rounded-xl border border-slate-800 bg-slate-900/60 p-5">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Interests</span>
+          <div className="md:col-span-2 space-y-2">
+            <span className="terra-field-label">Interests</span>
             {profile.interests && profile.interests.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {profile.interests.map((interest) => (
-                  <span key={interest} className="rounded-full bg-slate-800 px-3 py-1 text-xs text-slate-200">
+                  <span
+                    key={interest}
+                    className="rounded-full border border-[rgba(46,59,69,0.14)] bg-[rgba(46,59,69,0.1)] px-3 py-1 text-xs font-semibold text-ink-600"
+                  >
                     {interest}
                   </span>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-slate-400">Add topics you care about to help tailor recommendations.</p>
+              <p className="text-body-sm text-ink-600">Add topics you care about to help tailor recommendations.</p>
             )}
           </div>
         </div>
-      </div>
+      </TerraLedgerSection>
     </section>
+  );
+}
+
+function StatusPill({ label, enabled }: { label: string; enabled: boolean }) {
+  return (
+    <span
+      className={[
+        "inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-semibold",
+        enabled ? "bg-[rgba(106,169,127,0.15)] text-accent-verdant" : "bg-[rgba(46,59,69,0.08)] text-ink-400"
+      ].join(" ")}
+    >
+      {label}: {enabled ? "On" : "Off"}
+    </span>
   );
 }
 

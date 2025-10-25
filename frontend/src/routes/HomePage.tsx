@@ -1,77 +1,93 @@
 import { Link } from "react-router-dom";
 
+import { TerraBadge, TerraCard, TerraKPI, TerraLedgerSection, terraButtonClass } from "@/components/ui/terra";
 import { useAuth } from "@/providers/AuthProvider";
 
 function HomePage() {
   const { user, isAuthenticated } = useAuth();
 
-  return (
-    <section className="flex flex-col gap-10 rounded-3xl border border-slate-800 bg-slate-900/60 p-10 shadow-2xl shadow-indigo-500/20 backdrop-blur">
-      <div className="max-w-2xl space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight text-white md:text-5xl">
-          {isAuthenticated ? `Welcome back, ${user?.first_name}!` : "Welcome to the Community App"}
-        </h1>
-        <p className="text-base text-slate-300 md:text-lg">
-          Browse the community content library, review your profile, or manage notification preferences—all
-          wired end-to-end with the FastAPI backend.
-        </p>
-        <p className="text-sm text-slate-400">
-          Use the quick links below to explore key areas. The content library now supports filters, search, and
-          pagination so members can quickly find relevant resources.
-        </p>
-      </div>
+  const quickLinks = [
+    { label: "My Profile", to: "/profile" },
+    { label: "Browse Content", to: "/content" },
+    { label: "Settings", to: "/profile/settings" },
+    { label: "Login", to: "/auth/login" },
+    { label: "Register", to: "/auth/register" },
+    { label: "Forgot Password", to: "/auth/forgot-password" },
+    { label: "Verify Email", to: "/auth/verify-email" },
+    { label: "Logout", to: "/auth/logout" }
+  ];
 
-      <div className="flex flex-wrap gap-3">
-        <Link
-          to="/profile"
-          className="rounded-lg border border-slate-700 px-5 py-3 text-sm font-semibold text-white transition hover:border-slate-500 hover:text-slate-100"
-        >
-          My Profile
-        </Link>
-        <Link
-          to="/content"
-          className="rounded-lg border border-slate-700 px-5 py-3 text-sm font-semibold text-white transition hover:border-slate-500 hover:text-slate-100"
-        >
-          Browse Content
-        </Link>
-        <Link
-          to="/profile/settings"
-          className="rounded-lg border border-slate-800 px-5 py-3 text-sm font-semibold text-slate-300 transition hover:border-slate-600 hover:text-white"
-        >
-          Settings
-        </Link>
-        <Link
-          to="/auth/login"
-          className="rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-brand-foreground shadow-lg shadow-brand/30 transition hover:bg-indigo-500"
-        >
-          Go to Login
-        </Link>
-        <Link
-          to="/auth/register"
-          className="rounded-lg border border-slate-700 px-5 py-3 text-sm font-semibold text-white transition hover:border-slate-500 hover:text-slate-100"
-        >
-          Register
-        </Link>
-        <Link
-          to="/auth/forgot-password"
-          className="rounded-lg border border-slate-800 px-5 py-3 text-sm font-semibold text-slate-300 transition hover:border-slate-600 hover:text-white"
-        >
-          Forgot Password
-        </Link>
-        <Link
-          to="/auth/verify-email"
-          className="rounded-lg border border-slate-800 px-5 py-3 text-sm font-semibold text-slate-300 transition hover:border-slate-600 hover:text-white"
-        >
-          Verify Email
-        </Link>
-        <Link
-          to="/auth/logout"
-          className="rounded-lg border border-slate-800 px-5 py-3 text-sm font-semibold text-slate-300 transition hover:border-slate-600 hover:text-white"
-        >
-          Logout
-        </Link>
-      </div>
-    </section>
+  return (
+    <div className="flex flex-col gap-10">
+      <TerraCard
+        eyebrow={<TerraBadge tone="success">Strategy Hub</TerraBadge>}
+        title={isAuthenticated ? `Welcome back, ${user?.first_name}!` : "Community App"}
+        action={!isAuthenticated ? <Link to="/auth/register" className={terraButtonClass("primary")}>Join the beta</Link> : null}
+      >
+        <div className="space-y-4 text-body-lg text-ink-700">
+          <p>
+            Share playbooks, inspect audit trails, and keep your enablement assets in one trusted workspace.
+            Terra Trust delivers an enterprise-grade presentation with the agility your field teams expect.
+          </p>
+          <p className="text-body-sm text-ink-500">
+            The content library features advanced filters, signed downloads, and audit-ready reporting so every
+            interaction is accountable.
+          </p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          <TerraLedgerSection title="Engagement" description="Live insights from the closed beta">
+            <div className="grid gap-6">
+              <TerraKPI label="Active members" value={128} />
+              <TerraKPI label="Downloads this week" value={342} />
+            </div>
+          </TerraLedgerSection>
+          <TerraLedgerSection title="Content velocity" description="Most-utilised actions this quarter">
+            <ul className="space-y-3 text-body-sm text-ink-600">
+              <li className="flex items-center justify-between">
+                <span>Sales playbooks uploaded</span>
+                <span className="font-semibold text-ink-900">27</span>
+              </li>
+              <li className="flex items-center justify-between">
+                <span>Audit log entries</span>
+                <span className="font-semibold text-ink-900">1,984</span>
+              </li>
+              <li className="flex items-center justify-between">
+                <span>Notifications opted-in</span>
+                <span className="font-semibold text-accent-verdant">86%</span>
+              </li>
+            </ul>
+          </TerraLedgerSection>
+          <TerraLedgerSection title="Admin focus" description="Stay ahead with quick actions">
+            <div className="flex flex-col gap-3">
+              <Link to="/admin/content" className={terraButtonClass("primary")}>
+                Upload new content
+              </Link>
+              <Link to="/admin/audit" className={terraButtonClass("ghost")}>
+                Review audit feed
+              </Link>
+            </div>
+          </TerraLedgerSection>
+        </div>
+      </TerraCard>
+
+      <TerraLedgerSection
+        title="Navigate quickly"
+        description="Key destinations across authentication, profiles, and content"
+      >
+        <div className="flex flex-wrap gap-3">
+          {quickLinks.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className={terraButtonClass(link.label === "Login" ? "primary" : "ghost")}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      </TerraLedgerSection>
+    </div>
   );
 }
 

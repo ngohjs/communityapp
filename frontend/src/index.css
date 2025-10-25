@@ -4,18 +4,363 @@
 
 @layer base {
   :root {
-    color-scheme: dark;
+    color-scheme: light;
+    --font-heading: "Source Serif Pro", serif;
+    --font-body: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+    --terra-accent-clay: #b46a55;
+    --terra-accent-clay-foreground: #ffffff;
+    --terra-accent-verdant: #6aa97f;
+
+    --terra-surface-canvas: #f4f6f8;
+    --terra-surface-raised: #ffffff;
+    --terra-surface-subtle: #f0f2f4;
+
+    --terra-ink-900: #1f262b;
+    --terra-ink-700: #2e3b45;
+    --terra-ink-500: #556371;
+    --terra-ink-300: #8d98a1;
+
+    --terra-radius-card: 20px;
+    --terra-radius-ledger: 16px;
+    --terra-shadow-ledger: 0 22px 44px -30px rgba(30, 40, 50, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    --terra-space-card-padding: 1.875rem; /* 30px */
   }
 
   body {
-    @apply m-0 min-h-screen bg-slate-950 font-sans text-slate-50 antialiased;
+    margin: 0;
+    min-height: 100vh;
+    background: var(--terra-surface-canvas);
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(242, 245, 247, 0) 320px);
+    font-family: var(--font-body);
+    color: var(--terra-ink-900);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  main {
+    isolation: isolate;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    color: var(--terra-ink-900);
+    margin-top: 0;
+    margin-bottom: 0.5em;
+  }
+
+  h1 {
+    font-size: 2.625rem;
+    line-height: 3.125rem;
+  }
+
+  h2 {
+    font-size: 1.625rem;
+    line-height: 2.125rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
   }
 
   a {
-    @apply text-brand hover:text-indigo-300;
+    color: var(--terra-accent-verdant);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 160ms ease;
+  }
+
+  a:hover {
+    color: var(--terra-accent-clay);
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid rgba(106, 169, 127, 0.45);
+    outline-offset: 2px;
+    border-radius: 8px;
   }
 
   ::selection {
-    @apply bg-brand/40 text-white;
+    background: rgba(106, 169, 127, 0.28);
+    color: var(--terra-ink-900);
+  }
+
+  /* Legacy palette bridge */
+  .bg-slate-950 {
+    background-color: var(--terra-surface-canvas) !important;
+    color: var(--terra-ink-900) !important;
+  }
+
+  .bg-slate-900,
+  .bg-slate-900\/60 {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+  }
+
+  .text-slate-50 {
+    color: var(--terra-ink-900) !important;
+  }
+
+  .text-slate-300,
+  .text-slate-400 {
+    color: var(--terra-ink-500) !important;
+  }
+
+  .text-slate-500 {
+    color: var(--terra-ink-300) !important;
+  }
+
+}
+
+.border-slate-800,
+.border-slate-700 {
+  border-color: rgba(46, 59, 69, 0.14) !important;
+}
+
+@layer components {
+  .terra-field-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--terra-ink-500);
+  }
+
+  .terra-input,
+  .terra-select,
+  .terra-textarea,
+  .terra-date,
+  .terra-field {
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid rgba(46, 59, 69, 0.16);
+    background: var(--terra-surface-raised);
+    padding: 0.65rem 0.9rem;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: var(--terra-ink-900);
+    transition: border 160ms ease, box-shadow 160ms ease;
+    box-shadow: inset 0 2px 4px rgba(31, 38, 45, 0.04);
+  }
+
+  .terra-select {
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, rgba(31, 38, 45, 0.4) 50%),
+      linear-gradient(135deg, rgba(31, 38, 45, 0.4) 50%, transparent 50%),
+      linear-gradient(to right, rgba(31, 38, 45, 0.1), rgba(31, 38, 45, 0.1));
+    background-position: calc(100% - 16px) calc(50% - 4px), calc(100% - 11px) calc(50% - 4px), 100% 0;
+    background-size: 5px 5px, 5px 5px, 2.6rem 100%;
+    background-repeat: no-repeat;
+  }
+
+  .terra-input:focus,
+  .terra-select:focus,
+  .terra-textarea:focus,
+  .terra-date:focus,
+  .terra-field:focus {
+    border-color: rgba(106, 169, 127, 0.6);
+    box-shadow: 0 0 0 3px rgba(106, 169, 127, 0.28);
+    outline: none;
+  }
+
+  .terra-toggle {
+    position: relative;
+    width: 3.75rem;
+    height: 2rem;
+    border-radius: 999px;
+    border: 1px solid rgba(46, 59, 69, 0.18);
+    background: rgba(230, 236, 241, 0.9);
+    transition: background 180ms ease, border 180ms ease, box-shadow 180ms ease;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .terra-toggle::after {
+    content: "";
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    background: #ffffff;
+    box-shadow: 0 6px 10px rgba(31, 38, 45, 0.18);
+    transform: translateX(6px);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+
+  .terra-toggle[aria-pressed="true"] {
+    background: linear-gradient(135deg, rgba(180, 106, 85, 0.9), rgba(180, 106, 85, 0.7));
+    border-color: rgba(180, 106, 85, 0.8);
+    box-shadow: 0 12px 24px -12px rgba(180, 106, 85, 0.65);
+  }
+
+  .terra-toggle[aria-pressed="true"]::after {
+    transform: translateX(calc(100% + 6px));
+    box-shadow: 0 8px 16px rgba(180, 106, 85, 0.4);
+  }
+
+  .terra-toggle:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  .terra-card {
+    position: relative;
+    border-radius: var(--terra-radius-card);
+    padding: var(--terra-space-card-padding);
+    background: var(--terra-surface-raised);
+    box-shadow: var(--terra-shadow-ledger);
+    border: 1px solid rgba(46, 59, 69, 0.12);
+    overflow: hidden;
+  }
+
+  .terra-card::after {
+    pointer-events: none;
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(
+        180deg,
+        rgba(46, 59, 69, 0.08) 1px,
+        rgba(255, 255, 255, 0) 1px
+      ),
+      linear-gradient(90deg, rgba(46, 59, 69, 0.04) 1px, rgba(255, 255, 255, 0) 1px);
+    background-size: 100% 56px, 56px 100%;
+    opacity: 0.45;
+    mix-blend-mode: multiply;
+  }
+
+  .terra-card-content {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .terra-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    padding: 0.75rem 1.5rem;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+    border: 1px solid transparent;
+  }
+
+  .terra-btn-primary {
+    background: var(--terra-accent-clay);
+    color: var(--terra-accent-clay-foreground);
+    box-shadow: 0 16px 30px -24px rgba(180, 106, 85, 0.68);
+  }
+
+  .terra-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 18px 32px -22px rgba(180, 106, 85, 0.72);
+  }
+
+  .terra-btn-ghost {
+    border-color: rgba(46, 59, 69, 0.16);
+    background: rgba(230, 236, 241, 0.55);
+    color: var(--terra-ink-700);
+  }
+
+  .terra-btn-ghost:hover {
+    background: rgba(230, 236, 241, 0.9);
+  }
+
+  .terra-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(106, 169, 127, 0.12);
+    color: var(--terra-accent-verdant);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .terra-ledger-section {
+    position: relative;
+    border-radius: var(--terra-radius-ledger);
+    padding: 1.5rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(244, 246, 248, 1) 100%);
+    border: 1px solid rgba(46, 59, 69, 0.1);
+  }
+
+  .terra-ledger-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(180deg, rgba(46, 59, 69, 0.06) 0, rgba(46, 59, 69, 0.06) 1px, transparent 1px, transparent 48px);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .terra-alert {
+    position: relative;
+    border-radius: 18px;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid transparent;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    font-size: 0.95rem;
+  }
+
+  .terra-alert--danger {
+    background: rgba(220, 87, 94, 0.12);
+    border-color: rgba(220, 87, 94, 0.45);
+    color: #8c2a30;
+  }
+
+  .terra-alert--warning {
+    background: rgba(240, 173, 78, 0.12);
+    border-color: rgba(240, 173, 78, 0.4);
+    color: #7b4b14;
+  }
+
+  .terra-alert--info {
+    background: rgba(73, 145, 193, 0.12);
+    border-color: rgba(73, 145, 193, 0.4);
+    color: #2c5f80;
+  }
+
+  .terra-kpi {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .terra-kpi-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--terra-ink-500);
+    font-weight: 600;
+  }
+
+  .terra-kpi-value {
+    font-family: var(--font-heading);
+    font-size: 2.25rem;
+    line-height: 2.75rem;
+    color: var(--terra-ink-900);
+  }
+}
+
+@layer utilities {
+  .bg-ledger-gradient {
+    background-image: linear-gradient(135deg, rgba(229, 235, 240, 0.95), rgba(255, 255, 255, 0.75));
   }
 }

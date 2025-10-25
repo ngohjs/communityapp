@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
+import { TerraCard, TerraField, TerraLedgerSection, terraButtonClass } from "@/components/ui/terra";
 import { CONTENT_PAGE_SIZE, useContentCategories, useContentLibrary } from "@/hooks/useContentLibrary";
 import { ContentSummary } from "@/lib/api/content";
 
@@ -31,48 +32,47 @@ function formatDate(value: string | null) {
 
 function ContentCard({ item, categoryName }: { item: ContentSummary; categoryName?: string }) {
   return (
-    <article className="flex h-full flex-col justify-between rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-sm shadow-slate-900/40 transition hover:border-slate-700">
-      <div className="space-y-3">
+    <div className="terra-ledger-section flex h-full flex-col justify-between gap-5">
+      <div className="space-y-4">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-          <span className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300">
+          <div>
+            <h3 className="font-heading text-display-md text-ink-900">{item.title}</h3>
+            <p className="text-body-sm text-ink-500">Published {formatDate(item.published_at)}</p>
+          </div>
+          <span className="terra-badge bg-[rgba(46,59,69,0.12)] text-ink-700">
             {item.file_type.toUpperCase()}
           </span>
         </div>
         {item.description ? (
-          <p className="text-sm text-slate-400 line-clamp-3">{item.description}</p>
+          <p className="text-body-sm text-ink-700 line-clamp-3">{item.description}</p>
         ) : (
-          <p className="text-sm text-slate-500">No description provided.</p>
+          <p className="text-body-sm text-ink-300">No description provided.</p>
         )}
-        <dl className="grid grid-cols-2 gap-3 text-xs text-slate-400">
+        <dl className="grid gap-4 text-body-sm text-ink-600 sm:grid-cols-2">
           <div>
-            <dt className="uppercase tracking-wide text-slate-500">Category</dt>
-            <dd className="text-sm text-slate-200">{categoryName ?? "Uncategorized"}</dd>
+            <dt className="terra-field-label text-[0.65rem] tracking-[0.2em]">Category</dt>
+            <dd className="text-ink-900">{categoryName ?? "Uncategorized"}</dd>
           </div>
           <div>
-            <dt className="uppercase tracking-wide text-slate-500">Updated</dt>
-            <dd className="text-sm text-slate-200">{formatDate(item.updated_at)}</dd>
+            <dt className="terra-field-label text-[0.65rem] tracking-[0.2em]">Updated</dt>
+            <dd className="text-ink-900">{formatDate(item.updated_at)}</dd>
           </div>
           <div>
-            <dt className="uppercase tracking-wide text-slate-500">Likes</dt>
-            <dd className="text-sm text-slate-200">{item.likes_count}</dd>
+            <dt className="terra-field-label text-[0.65rem] tracking-[0.2em]">Likes</dt>
+            <dd className="text-ink-900">{item.likes_count}</dd>
           </div>
           <div>
-            <dt className="uppercase tracking-wide text-slate-500">Comments</dt>
-            <dd className="text-sm text-slate-200">{item.comments_count}</dd>
+            <dt className="terra-field-label text-[0.65rem] tracking-[0.2em]">Comments</dt>
+            <dd className="text-ink-900">{item.comments_count}</dd>
           </div>
         </dl>
       </div>
-      <div className="mt-4 flex items-center justify-between">
-        <span className="text-xs text-slate-500">Published {formatDate(item.published_at)}</span>
-        <Link
-          to={`/content/${item.id}`}
-          className="rounded-lg border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white"
-        >
+      <div className="flex items-center justify-between">
+        <Link to={`/content/${item.id}`} className={terraButtonClass("ghost") + " text-sm"}>
           View details
         </Link>
       </div>
-    </article>
+    </div>
   );
 }
 
@@ -130,31 +130,30 @@ export default function LibraryPage() {
 
   return (
     <section className="flex min-h-[70vh] flex-col gap-8">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-semibold text-white">Content Library</h1>
-        <p className="text-sm text-slate-400">
-          Browse the latest resources from the community. Use filters to find the materials most relevant to you.
+      <header className="space-y-3">
+        <h1 className="font-heading text-display-xl text-ink-900">Content Library</h1>
+        <p className="text-body-lg text-ink-600">
+          Browse the latest resources from the community. Use filters to zoom into collateral that matters for your
+          pipeline reviews.
         </p>
       </header>
 
-      <div className="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg shadow-slate-900/40">
-        <form onSubmit={handleSearchSubmit} className="grid gap-4 md:grid-cols-4">
-          <div className="md:col-span-2 flex flex-col gap-2">
-            <label htmlFor="search" className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Keyword
-            </label>
-            <input
-              id="search"
-              name="search"
-              value={searchInput}
-              onChange={(event) => setSearchInput(event.target.value)}
-              placeholder="Search by title or description"
-              className="rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-sm text-white outline-none focus:border-brand focus:ring-2 focus:ring-brand/40"
-            />
+      <TerraCard title="Refine results" eyebrow={<span className="terra-badge">Filters</span>}>
+        <form onSubmit={handleSearchSubmit} className="grid gap-5 md:grid-cols-4">
+          <div className="md:col-span-2">
+            <TerraField label="Keyword" htmlFor="search" hint="Search by title or description">
+              <input
+                id="search"
+                name="search"
+                value={searchInput}
+                onChange={(event) => setSearchInput(event.target.value)}
+                placeholder="Search by title or description"
+                className="terra-input"
+              />
+            </TerraField>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Category</label>
+          <TerraField label="Category">
             <select
               value={filters.categoryId ?? ""}
               onChange={(event) => {
@@ -168,7 +167,7 @@ export default function LibraryPage() {
                 next.delete("page");
                 setSearchParams(next, { replace: true });
               }}
-              className="rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-sm text-white outline-none focus:border-brand focus:ring-2 focus:ring-brand/40"
+              className="terra-select"
             >
               <option value="">All categories</option>
               {categoriesQuery.data?.items.map((category) => (
@@ -177,10 +176,9 @@ export default function LibraryPage() {
                 </option>
               ))}
             </select>
-          </div>
+          </TerraField>
 
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">File type</label>
+          <TerraField label="File type">
             <select
               value={filters.contentType ?? ""}
               onChange={(event) => {
@@ -194,7 +192,7 @@ export default function LibraryPage() {
                 next.delete("page");
                 setSearchParams(next, { replace: true });
               }}
-              className="rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-sm text-white outline-none focus:border-brand focus:ring-2 focus:ring-brand/40"
+              className="terra-select"
             >
               {FILE_TYPE_OPTIONS.map((option) => (
                 <option key={option.value || "all"} value={option.value}>
@@ -202,11 +200,10 @@ export default function LibraryPage() {
                 </option>
               ))}
             </select>
-          </div>
+          </TerraField>
 
-          <div className="md:col-span-2 grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Uploaded after</label>
+          <div className="md:col-span-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <TerraField label="Uploaded after">
               <input
                 type="date"
                 value={filters.uploadedAfter ?? ""}
@@ -221,11 +218,10 @@ export default function LibraryPage() {
                   next.delete("page");
                   setSearchParams(next, { replace: true });
                 }}
-                className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white outline-none focus:border-brand focus:ring-2 focus:ring-brand/40"
+                className="terra-input terra-date"
               />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Uploaded before</label>
+            </TerraField>
+            <TerraField label="Uploaded before">
               <input
                 type="date"
                 value={filters.uploadedBefore ?? ""}
@@ -240,28 +236,21 @@ export default function LibraryPage() {
                   next.delete("page");
                   setSearchParams(next, { replace: true });
                 }}
-                className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white outline-none focus:border-brand focus:ring-2 focus:ring-brand/40"
+                className="terra-input terra-date"
               />
-            </div>
+            </TerraField>
           </div>
 
           <div className="flex items-end justify-end gap-3 md:col-span-2">
-            <button
-              type="button"
-              onClick={resetFilters}
-              className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white"
-            >
+            <button type="button" onClick={resetFilters} className={terraButtonClass("ghost")}>
               Reset
             </button>
-            <button
-              type="submit"
-              className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground shadow-lg shadow-brand/30 transition hover:bg-indigo-500"
-            >
+            <button type="submit" className={terraButtonClass("primary")}>
               Apply filters
             </button>
           </div>
         </form>
-      </div>
+      </TerraCard>
 
       {error ? (
         <div className="rounded-3xl border border-red-500/40 bg-red-500/10 p-10 text-sm text-red-200">
@@ -269,25 +258,25 @@ export default function LibraryPage() {
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="flex items-center justify-between text-sm text-slate-400">
+          <div className="flex items-center justify-between text-body-sm text-ink-600">
             <span>{isFetching ? "Refreshing results…" : `${totalRecords} items found`}</span>
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => setPage(Math.max(1, pageParam - 1))}
                 disabled={pageParam <= 1}
-                className="rounded-md border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-300 transition hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
+                className={terraButtonClass("ghost") + " px-4 py-2 text-xs"}
               >
                 Previous
               </button>
-              <span className="text-xs text-slate-500">
+              <span className="text-data-xs text-ink-500 uppercase tracking-[0.18em]">
                 Page {pageParam} of {totalPages}
               </span>
               <button
                 type="button"
                 onClick={() => setPage(Math.min(totalPages, pageParam + 1))}
                 disabled={pageParam >= totalPages}
-                className="rounded-md border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-300 transition hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-40"
+                className={terraButtonClass("ghost") + " px-4 py-2 text-xs"}
               >
                 Next
               </button>
@@ -299,20 +288,17 @@ export default function LibraryPage() {
               Loading content library…
             </div>
           ) : items.length === 0 ? (
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/60 p-10 text-center text-sm text-slate-300">
+            <div className="terra-ledger-section text-center text-body-sm text-ink-600">
               <p>No content matches your filters yet.</p>
-              <p className="mt-2 text-xs text-slate-500">
+              <p className="mt-2 text-body-sm text-ink-500">
                 Admins can upload new resources from the admin dashboard.
               </p>
-              <Link
-                to="/admin/content"
-                className="mt-4 inline-flex rounded-lg border border-slate-700 px-4 py-2 text-xs font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white"
-              >
+              <Link to="/admin/content" className={terraButtonClass("primary") + " mt-4 inline-flex text-xs"}>
                 Go to admin content dashboard
               </Link>
             </div>
           ) : (
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {items.map((item: ContentSummary) => (
                 <ContentCard
                   key={item.id}
